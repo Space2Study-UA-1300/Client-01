@@ -17,7 +17,8 @@ const LoginForm = ({
   handleChange,
   handleBlur,
   data,
-  errors
+  errors,
+  isDirty
 }) => {
   const { inputVisibility: passwordVisibility, showInputText: showPassword } =
     useInputVisibility(errors.password)
@@ -71,10 +72,8 @@ const LoginForm = ({
       </Typography>
 
       <AppButton
+        disabled={!isDirty}
         loading={authLoading}
-        onClick={() => {
-          console.log('clicked')
-        }}
         sx={styles.loginButton}
         type='submit'
       >
