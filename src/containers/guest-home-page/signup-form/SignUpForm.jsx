@@ -44,7 +44,7 @@ const SignUpForm = ({
           required
           size='large'
           sx={{ mb: '5px' }}
-          type='email'
+          type='text'
           value={data.firstName}
         />
         <AppTextField
@@ -58,7 +58,7 @@ const SignUpForm = ({
           required
           size='large'
           sx={{ mb: '5px' }}
-          type='email'
+          type='text'
           value={data.lastName}
         />
       </Box>
