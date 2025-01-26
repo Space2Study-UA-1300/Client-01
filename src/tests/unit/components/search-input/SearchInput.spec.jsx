@@ -27,6 +27,11 @@ describe('SearchInput', () => {
     expect(deleteIcon).toBeInTheDocument()
   })
 
+  it('renders the search input with the entered text', async () => {
+    await userEvent.type(searchInput, 'sometext')
+    expect(searchInput).toHaveValue('sometext')
+  })
+
   it('calls setSearch when search icon is clicked', async () => {
     await userEvent.click(searchIcon)
     expect(mockSetSearch).toHaveBeenCalled()
