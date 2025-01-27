@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import AppContentSwitcher from '~/components/app-content-switcher/AppContentSwitcher'
-import { describe, it, expect, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('AppContentSwitcher', () => {
   const switchOptionsMock = {
