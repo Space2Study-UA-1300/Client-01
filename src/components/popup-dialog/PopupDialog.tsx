@@ -8,6 +8,7 @@ import { useModalContext } from '~/context/modal-context'
 
 import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/popup-dialog/PopupDialog.styles'
+import { useLoginFormContext } from '~/context/login-context'
 
 interface PopupDialogProps {
   content: React.ReactNode
@@ -24,11 +25,10 @@ const PopupDialog: FC<PopupDialogProps> = ({
 }) => {
   const { isMobile } = useBreakpoints()
   const { closeModal } = useModalContext()
+  const { isDirty } = useLoginFormContext()
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
-  const handleDialogClick: React.MouseEventHandler<HTMLDivElement> = () => {
-    closeModal()
-  }
+  const handleDialogClick = () => !isDirty && closeModal()
 
   return (
     <Dialog
