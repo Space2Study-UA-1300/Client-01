@@ -54,9 +54,8 @@ describe('SearchInput', () => {
     }
   })
 
-  it('deleteIcon should have the "visible" class if the search field is empty', () => {
-    if (searchInput.value.length > 0) {
-      expect(deleteIcon).toHaveClass('visible')
-    }
+  it('deleteIcon should have the "visible" class if the search field is empty', async () => {
+    await userEvent.type(searchInput, 'sometext')
+    expect(deleteIcon).toHaveClass('visible')
   })
 })
