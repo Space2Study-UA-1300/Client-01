@@ -8,6 +8,7 @@ import {
 } from 'react'
 import PopupDialog from '~/components/popup-dialog/PopupDialog'
 import { PaperProps } from '@mui/material/Paper'
+import { LoginFormProvider } from '~/context/login-context'
 
 interface Component {
   component: React.ReactElement
@@ -65,12 +66,14 @@ const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     <ModalContext.Provider value={contextValue}>
       {children}
       {modal && (
-        <PopupDialog
-          closeModalAfterDelay={closeModalAfterDelay}
-          content={modal}
-          paperProps={paperProps}
-          timerId={timer}
-        />
+        <LoginFormProvider>
+          <PopupDialog
+            closeModalAfterDelay={closeModalAfterDelay}
+            content={modal}
+            paperProps={paperProps}
+            timerId={timer}
+          />
+        </LoginFormProvider>
       )}
     </ModalContext.Provider>
   )
