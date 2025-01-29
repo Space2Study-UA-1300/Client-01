@@ -12,6 +12,7 @@ import { SnackBarProvider } from '~/context/snackbar-context'
 import { vi } from 'vitest'
 import MockAdapter from 'axios-mock-adapter'
 import { axiosClient } from '~/plugins/axiosClient'
+import { LoginFormProvider } from '~/context/login-context'
 
 export const renderWithProviders = (
   ui,
@@ -28,7 +29,10 @@ export const renderWithProviders = (
         <ThemeProvider theme={theme}>
           <SnackBarProvider>
             <ConfirmationDialogProvider>
-              <ModalProvider>{children}</ModalProvider>
+              <ModalProvider>
+                {/* eslint-disable-next-line react/jsx-max-depth */}
+                <LoginFormProvider>{children}</LoginFormProvider>
+              </ModalProvider>
             </ConfirmationDialogProvider>
           </SnackBarProvider>
         </ThemeProvider>
