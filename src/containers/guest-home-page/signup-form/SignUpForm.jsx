@@ -102,7 +102,7 @@ const SignUpForm = ({
       />
 
       <FormControlLabel
-        control={<Checkbox />} // disabled
+        control={<Checkbox disabled />}
         label={
           <Typography sx={styles.agreement}>
             {t('signup.iAgree')}{' '}
@@ -112,7 +112,7 @@ const SignUpForm = ({
         }
       />
       <AppButton
-        // disabled
+        disabled
         loading={authLoading}
         sx={styles.signUpButton}
         type='submit'
