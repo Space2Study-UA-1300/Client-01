@@ -13,12 +13,21 @@ import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
 
+import { useSignUpMutation } from '~/services/auth-service'
+
 const SignUpDialog = ({ actionType }) => {
   const { t } = useTranslation()
+  const [signUpUser] = useSignUpMutation()
 
   const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
     {
-      onSubmit: async () => {},
+      onSubmit: async () => {
+        try {
+          const res = await signUpUser({ role: actionType, ...data })
+        } catch (error) {
+          console.error('Signup failed:', error)
+        }
+      },
       initialValues: {
         firstName: '',
         lastName: '',

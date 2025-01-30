@@ -16,9 +16,9 @@ import useInputVisibility from '~/hooks/use-input-visibility'
 const SignUpForm = ({
   data,
   errors,
-  handleSubmit,
+  handleBlur,
   handleChange,
-  handleBlur
+  handleSubmit
 }) => {
   const { inputVisibility: passwordVisibility, showInputText: showPassword } =
     useInputVisibility(errors.password)
@@ -102,7 +102,7 @@ const SignUpForm = ({
       />
 
       <FormControlLabel
-        control={<Checkbox disabled />}
+        control={<Checkbox />} // disabled
         label={
           <Typography sx={styles.agreement}>
             {t('signup.iAgree')}{' '}
@@ -111,9 +111,8 @@ const SignUpForm = ({
           </Typography>
         }
       />
-
       <AppButton
-        disabled
+        // disabled
         loading={authLoading}
         sx={styles.signUpButton}
         type='submit'
