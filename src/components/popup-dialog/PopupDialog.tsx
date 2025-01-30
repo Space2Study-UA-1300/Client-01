@@ -9,6 +9,8 @@ import { useModalContext } from '~/context/modal-context'
 import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/popup-dialog/PopupDialog.styles'
 import { useLoginFormContext } from '~/context/login-context'
+import { useState } from 'react'
+import ConfirmationPopUp from '~/components/popup-confirmation/ConfirmationPopUp'
 
 interface PopupDialogProps {
   content: React.ReactNode
@@ -23,12 +25,21 @@ const PopupDialog: FC<PopupDialogProps> = ({
   timerId,
   closeModalAfterDelay
 }) => {
+  const [open, setOpen] = useState(false)
+
   const { isMobile } = useBreakpoints()
   const { closeModal } = useModalContext()
   const { isDirty } = useLoginFormContext()
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
-  const handleDialogClick = () => !isDirty && closeModal()
+  const handleDialogClick = () => isDirty && setOpen(true)
+  const handleClickCloseAll = () => {
+    setOpen(false)
+    closeModal()
+  }
+  const handleClickCloseConfirmationPopUp = () => {
+    setOpen(false)
+  }
 
   return (
     <Dialog
@@ -50,6 +61,11 @@ const PopupDialog: FC<PopupDialogProps> = ({
           <CloseIcon />
         </IconButton>
         <Box sx={styles.contentWraper}>{content}</Box>
+        <ConfirmationPopUp
+          handleClickNo={handleClickCloseConfirmationPopUp}
+          handleClickYes={handleClickCloseAll}
+          open={open}
+        />
       </Box>
     </Dialog>
   )
