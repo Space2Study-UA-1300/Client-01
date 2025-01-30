@@ -1,44 +1,63 @@
-// import { FC } from 'react'
-import Box from '@mui/material/Box'
+import * as React from 'react'
+import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
+import { styles } from '~/components/popup-confirmation/ConfirmationPopUp.styles'
 import CloseIcon from '@mui/icons-material/Close'
-// import { PaperProps } from '@mui/material'
-import { useModalContext } from '~/context/modal-context'
 
-import useBreakpoints from '~/hooks/use-breakpoints'
-import { styles } from '~/components/popup-dialog/PopupDialog.styles'
-import { useLoginFormContext } from '~/context/login-context'
+interface ConfirmationPopUpProps {
+  open: boolean
+  handleClickYes: () => void
+  handleClickNo: () => void
+}
 
-// interface PopupDialogProps {
-//   content: React.ReactNode
-//   paperProps: PaperProps
-//   timerId: NodeJS.Timeout | null
-//   closeModalAfterDelay: (delay?: number) => void
-// }
-
-const ConfirmationPopUp = () => {
-  const { isMobile } = useBreakpoints()
-  const { closeModal } = useModalContext()
-  const { isDirty } = useLoginFormContext()
-  const handleDialogClick = () => !isDirty && closeModal()
-
+const ConfirmationPopUp: React.FC<ConfirmationPopUpProps> = ({
+  open,
+  handleClickYes,
+  handleClickNo
+}) => {
   return (
     <Dialog
-      // PaperProps={paperProps}
-      data-testid='popup'
-      disableRestoreFocus
-      fullScreen={isMobile}
-      maxWidth='xl'
-      onClose={handleDialogClick}
-      open
+      aria-describedby='alert-dialog-description'
+      aria-labelledby='alert-dialog-title'
+      open={open}
     >
-      <Box data-testid='popupContent' sx={styles.box}>
-        <IconButton onClick={closeModal} sx={styles.icon}>
-          <CloseIcon />
-        </IconButton>
-        <Box sx={styles.contentWraper}></Box>
-      </Box>
+      <IconButton
+        onClick={() => {
+          handleClickNo()
+        }}
+        sx={styles.icon}
+      >
+        <CloseIcon />
+      </IconButton>
+      <DialogTitle id='alert-dialog-title'>Please confirm</DialogTitle>
+      <DialogContent>
+        <DialogContentText id='alert-dialog-description'>
+          Are you certain you want to close? Any unsaved changes will be lost
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={styles.wrapperButton}>
+        <Button
+          onClick={() => {
+            handleClickYes()
+          }}
+          sx={styles.button}
+        >
+          Yes
+        </Button>
+        <Button
+          onClick={() => {
+            handleClickNo()
+          }}
+          sx={styles.button}
+        >
+          No
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
