@@ -13,6 +13,7 @@ import { vi } from 'vitest'
 import MockAdapter from 'axios-mock-adapter'
 import { axiosClient } from '~/plugins/axiosClient'
 import { LoginFormProvider } from '~/context/login-context'
+import { SingUpFormProvider } from '~/context/singUp-context'
 
 export const renderWithProviders = (
   ui,
@@ -27,20 +28,25 @@ export const renderWithProviders = (
     <Provider store={store}>
       <MemoryRouter initialEntries={[initialEntries]}>
         <ThemeProvider theme={theme}>
-          <SnackBarProvider>
-            <ConfirmationDialogProvider>
-              <ModalProvider>
-                {/* eslint-disable-next-line react/jsx-max-depth */}
-                <LoginFormProvider>{children}</LoginFormProvider>
-              </ModalProvider>
-            </ConfirmationDialogProvider>
-          </SnackBarProvider>
+          <ContextProviders>{children}</ContextProviders>
         </ThemeProvider>
       </MemoryRouter>
     </Provider>
   )
   return render(ui, { wrapper: Wrapper, ...renderOptions })
 }
+
+const ContextProviders = ({ children }) => (
+  <SnackBarProvider>
+    <ConfirmationDialogProvider>
+      <ModalProvider>
+        <LoginFormProvider>
+          <SingUpFormProvider>{children}</SingUpFormProvider>
+        </LoginFormProvider>
+      </ModalProvider>
+    </ConfirmationDialogProvider>
+  </SnackBarProvider>
+)
 
 export const getFakeTestEvent = (key, value) => ({
   preventDefault: vi.fn(),
