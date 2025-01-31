@@ -4,8 +4,11 @@ import { styles } from '~/containers/tutor-home-page/subjects-step/SubjectsStep.
 import img from '~/assets/img/student-home-page/image.jpg'
 import SubjectForm from '~/containers/tutor-home-page/subjects-step/subject-form/SubjectForm'
 import Typography from '@mui/material/Typography'
+import { useTranslation } from 'react-i18next'
 
 const SubjectsStep = ({ btnsBox }) => {
+  const { t } = useTranslation()
+
   return (
     <Box sx={styles.container}>
       <Box sx={styles.imgContainer}>
@@ -14,9 +17,7 @@ const SubjectsStep = ({ btnsBox }) => {
       <Box sx={styles.rigthBox}>
         <Box>
           <Typography sx={styles.description}>
-            {
-              'Please choose the main subjects based on the category. You can add others later.'
-            }
+            {t('becomeTutor.categories.title')}
           </Typography>
           <Box sx={styles.form}>
             <SubjectForm />

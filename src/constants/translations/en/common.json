@@ -60,9 +60,7 @@
     "closeOffer": "Close an offer",
     "sortBy": "Sort by:",
     "subject": "Subject:",
-    "level": "Level:",
-    "mainTutorinCategory": "Main Tutoring Category",
-    "stepSubject": "Subject"
+    "level": "Level:"
   },
   "errorMessages": {
     "emailValid": "Email should be of the following format: “local-part@domain.com”",

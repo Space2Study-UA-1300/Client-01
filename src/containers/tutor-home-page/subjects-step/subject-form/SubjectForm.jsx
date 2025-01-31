@@ -57,20 +57,19 @@ const SubjectForm = ({ handleSubmit }) => {
         options={getCategoryArray(categoriesMock)}
         sx={{ marginBottom: '20px' }}
         textFieldProps={{
-          label: t('common.labels.mainTutorinCategory')
+          label: t('becomeTutor.categories.mainSubjectsLabel')
         }}
         value={searchCategory}
       />
-
       <AppSelect
         fields={categories(searchCategory ? subjects.values : [])}
-        label={t('common.labels.stepSubject')}
+        label={t('becomeTutor.categories.subjectLabel')}
         setValue={handleChangeSubject}
         sx={{ marginBottom: '16px' }}
         value={searchSubject}
       />
       <AppButton onClick={() => {}} sx={styles.button}>
-        Add one more subject
+        {t('becomeTutor.categories.btnText')}
       </AppButton>
     </Box>
   )
