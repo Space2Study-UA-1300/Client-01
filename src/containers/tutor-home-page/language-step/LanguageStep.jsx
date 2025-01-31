@@ -11,6 +11,22 @@ const languages = languagesMock.map((lang) => lang.name)
 
 const LanguageStep = ({ btnsBox }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(null)
+  const [displayedLanguages, setDisplayedLanguages] = useState(
+    languages.slice(0, 6)
+  )
+
+  const handleScroll = (event) => {
+    const listboxNode = event.currentTarget
+    if (
+      listboxNode.scrollTop + listboxNode.clientHeight >=
+      listboxNode.scrollHeight
+    ) {
+      setDisplayedLanguages((prev) => [
+        ...prev,
+        ...languages.slice(prev.length, prev.length + 6)
+      ])
+    }
+  }
 
   return (
     <Box sx={styles.container}>
@@ -24,8 +40,17 @@ const LanguageStep = ({ btnsBox }) => {
         </Typography>
 
         <Autocomplete
+          ListboxProps={{
+            style: { maxHeight: 200, overflow: 'auto' },
+            onScroll: handleScroll // Ленивая подгрузка при скролле
+          }}
+          filterOptions={(options, state) =>
+            options.filter((option) =>
+              option.toLowerCase().includes(state.inputValue.toLowerCase())
+            )
+          }
           onChange={(event, newValue) => setSelectedLanguage(newValue)}
-          options={languages} // Фиксированный список языков (без ленивой загрузки)
+          options={displayedLanguages} // Фиксированный список языков (без ленивой загрузки)
           renderInput={(params) => (
             <TextField {...params} label='Your native language' />
           )}
