@@ -23,19 +23,5 @@ export const styles = {
     justifyContent: 'space-between',
     m: { md: 0, xs: '0 auto' },
     pt: 0
-  },
-  button: {
-    fontWeight: 500,
-    fontSize: '16px',
-    lineHeight: '24px',
-    letterSpacing: '0.5px',
-    textTransform: 'initial',
-    backgroundColor: '#eceff1',
-    color: '#263238',
-    width: '100%',
-    boxShadow: 'none',
-    '&:hover': {
-      backgroundColor: '#eceff1'
-    }
   }
 }

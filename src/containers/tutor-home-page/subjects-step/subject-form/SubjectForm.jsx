@@ -3,10 +3,11 @@ import { useState } from 'react'
 
 import Box from '@mui/material/Box'
 
-import { styles } from '~/containers/guest-home-page/login-form/LoginForm.styles'
+import { styles } from '~/containers/tutor-home-page/subjects-step/subject-form/SubjectForm.styles'
 
 import AppSelect from '~/components/app-select/AppSelect'
 import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
+import AppButton from '~/components/app-button/AppButton'
 
 import {
   categoriesMock,
@@ -68,6 +69,9 @@ const SubjectForm = ({ handleSubmit }) => {
         sx={{ marginBottom: '16px' }}
         value={searchSubject}
       />
+      <AppButton onClick={() => {}} sx={styles.button}>
+        Add one more subject
+      </AppButton>
     </Box>
   )
 }

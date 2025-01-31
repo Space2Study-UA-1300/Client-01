@@ -4,7 +4,6 @@ import { styles } from '~/containers/tutor-home-page/subjects-step/SubjectsStep.
 import img from '~/assets/img/student-home-page/image.jpg'
 import SubjectForm from '~/containers/tutor-home-page/subjects-step/subject-form/SubjectForm'
 import Typography from '@mui/material/Typography'
-import AppButton from '~/components/app-button/AppButton'
 
 const SubjectsStep = ({ btnsBox }) => {
   return (
@@ -21,9 +20,6 @@ const SubjectsStep = ({ btnsBox }) => {
           </Typography>
           <Box sx={styles.form}>
             <SubjectForm />
-            <AppButton onClick={() => {}} sx={styles.button}>
-              Add one more subject
-            </AppButton>
           </Box>
         </Box>
         {btnsBox}
