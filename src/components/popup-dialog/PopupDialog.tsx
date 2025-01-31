@@ -5,31 +5,37 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import { PaperProps } from '@mui/material'
 import { useModalContext } from '~/context/modal-context'
-
 import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/popup-dialog/PopupDialog.styles'
-import { useLoginFormContext } from '~/context/login-context'
 import { useState } from 'react'
 import ConfirmationPopUp from '~/components/popup-confirmation/ConfirmationPopUp'
+import { useSingUpFormContext } from '~/context/singUp-context'
+import { useLoginFormContext } from '~/context/login-context'
 
 interface PopupDialogProps {
   content: React.ReactNode
   paperProps: PaperProps
   timerId: NodeJS.Timeout | null
   closeModalAfterDelay: (delay?: number) => void
+  type: string | undefined
 }
 
 const PopupDialog: FC<PopupDialogProps> = ({
   content,
   paperProps,
   timerId,
-  closeModalAfterDelay
+  closeModalAfterDelay,
+  type
 }) => {
-  const [open, setOpen] = useState(false)
+  const { isDirty: isLoginDirty } = useLoginFormContext()
+  const { isDirty: isSignUpDirty } = useSingUpFormContext()
 
+  const isDirty = type === 'LoginDialog' ? isLoginDirty : isSignUpDirty
+
+  const [open, setOpen] = useState(false)
   const { isMobile } = useBreakpoints()
   const { closeModal } = useModalContext()
-  const { isDirty } = useLoginFormContext()
+
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
   const handleDialogClick = () => isDirty && setOpen(true)

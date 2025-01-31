@@ -2,9 +2,6 @@ import { useTranslation } from 'react-i18next'
 
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-
-import useForm from '~/hooks/use-form'
-
 import styles from '~/containers/guest-home-page/signup-dialog/SignUpDialog.styles'
 import GoogleLogin from '~/containers/guest-home-page/google-login/GoogleLogin'
 import SignUpForm from '../signup-form/SignUpForm'
@@ -12,23 +9,13 @@ import SignUpForm from '../signup-form/SignUpForm'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
+import { useSingUpFormContext } from '~/context/singUp-context'
 
 const SignUpDialog = ({ actionType }) => {
   const { t } = useTranslation()
 
-  const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
-    {
-      onSubmit: async () => {},
-      initialValues: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-      }
-    }
-  )
-
+  const { data, errors, handleBlur, handleInputChange, handleSubmit } =
+    useSingUpFormContext()
   return (
     <Box sx={styles.root}>
       <Box sx={styles.imgContainer}>
