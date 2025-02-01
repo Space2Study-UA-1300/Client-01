@@ -29,6 +29,7 @@ const GuestHomePage = () => {
           <EmailConfirmModal
             confirmToken={confirmToken}
             openModal={openModal}
+            userEmail=''
           />
         )
       })

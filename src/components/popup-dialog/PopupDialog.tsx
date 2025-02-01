@@ -26,7 +26,7 @@ const PopupDialog: FC<PopupDialogProps> = ({
   const { closeModal } = useModalContext()
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
-  const handleDialogClick: React.MouseEventHandler<HTMLDivElement> = () => {
+  function handleDialogClick() {
     closeModal()
   }
 
@@ -42,6 +42,7 @@ const PopupDialog: FC<PopupDialogProps> = ({
     >
       <Box
         data-testid='popupContent'
+        onClick={(e) => e.stopPropagation()} // Prevent close on clicking inside the modal
         onMouseLeave={handleMouseLeave}
         onMouseOver={handleMouseOver}
         sx={styles.box}

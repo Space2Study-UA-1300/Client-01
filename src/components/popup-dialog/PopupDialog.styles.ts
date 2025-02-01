@@ -8,6 +8,7 @@ export const styles = {
   },
   contentWraper: { overflowY: { lg: 'auto' } },
   icon: {
+    cursor: 'pointer',
     color: 'primary.900',
     position: 'absolute',
     right: { xs: '8px', sm: '20px' },

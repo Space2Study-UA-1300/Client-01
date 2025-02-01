@@ -12,13 +12,36 @@ import SignUpForm from '../signup-form/SignUpForm'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
+import { useSignUpMutation } from '~/services/auth-service'
+import { snackbarVariants } from '~/constants'
+import { useSnackBarContext } from '~/context/snackbar-context'
+import EmailConfirmModal from '~/containers/email-confirm-modal/EmailConfirmModal'
+import { useModalContext } from '~/context/modal-context'
 
 const SignUpDialog = ({ actionType }) => {
   const { t } = useTranslation()
+  const [signUpUser] = useSignUpMutation()
+  const { setAlert } = useSnackBarContext()
+  const { openModal } = useModalContext()
 
   const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
     {
-      onSubmit: async () => {},
+      onSubmit: async () => {
+        try {
+          const res = await signUpUser({ role: actionType, ...data })
+          console.log(res.data.userEmail)
+          if (res.data.userEmail) {
+            openModal({
+              component: <EmailConfirmModal userEmail={res.data.userEmail} />
+            })
+          }
+        } catch (e) {
+          setAlert({
+            severity: snackbarVariants.error,
+            message: `errors.${e.data.code}`
+          })
+        }
+      },
       initialValues: {
         firstName: '',
         lastName: '',
