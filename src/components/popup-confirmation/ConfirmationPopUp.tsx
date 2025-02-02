@@ -8,6 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
 import { styles } from '~/components/popup-confirmation/ConfirmationPopUp.styles'
 import CloseIcon from '@mui/icons-material/Close'
+import { useTranslation } from 'react-i18next'
 
 interface ConfirmationPopUpProps {
   open: boolean
@@ -20,6 +21,7 @@ const ConfirmationPopUp: React.FC<ConfirmationPopUpProps> = ({
   handleClickYes,
   handleClickNo
 }) => {
+  const { t } = useTranslation()
   return (
     <Dialog
       aria-describedby='alert-dialog-description'
@@ -34,10 +36,12 @@ const ConfirmationPopUp: React.FC<ConfirmationPopUpProps> = ({
       >
         <CloseIcon />
       </IconButton>
-      <DialogTitle id='alert-dialog-title'>Please confirm</DialogTitle>
+      <DialogTitle id='alert-dialog-title'>
+        {t('confirmationPopUp.title')}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText id='alert-dialog-description'>
-          Are you certain you want to close? Any unsaved changes will be lost
+          {t('confirmationPopUp.subtitle')}
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={styles.wrapperButton}>
@@ -47,7 +51,7 @@ const ConfirmationPopUp: React.FC<ConfirmationPopUpProps> = ({
           }}
           sx={styles.button}
         >
-          Yes
+          {t('common.yes')}
         </Button>
         <Button
           onClick={() => {
@@ -55,7 +59,7 @@ const ConfirmationPopUp: React.FC<ConfirmationPopUpProps> = ({
           }}
           sx={styles.button}
         >
-          No
+          {t('common.no')}
         </Button>
       </DialogActions>
     </Dialog>
