@@ -8,12 +8,11 @@ import { theme } from '~/styles/app-theme/custom-mui.styles'
 import { ModalProvider } from '~/context/modal-context'
 import { ConfirmationDialogProvider } from '~/context/confirm-context'
 import { SnackBarProvider } from '~/context/snackbar-context'
+import { FormProvider } from '~/context/form-context'
 
 import { vi } from 'vitest'
 import MockAdapter from 'axios-mock-adapter'
 import { axiosClient } from '~/plugins/axiosClient'
-import { LoginFormProvider } from '~/context/login-context'
-import { SingUpFormProvider } from '~/context/singUp-context'
 
 export const renderWithProviders = (
   ui,
@@ -40,9 +39,7 @@ const ContextProviders = ({ children }) => (
   <SnackBarProvider>
     <ConfirmationDialogProvider>
       <ModalProvider>
-        <LoginFormProvider>
-          <SingUpFormProvider>{children}</SingUpFormProvider>
-        </LoginFormProvider>
+        <FormProvider>{children} </FormProvider>
       </ModalProvider>
     </ConfirmationDialogProvider>
   </SnackBarProvider>
