@@ -41,7 +41,8 @@ export const style = {
   rigthBox: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    gap: '20px',
     maxWidth: '432px',
     m: { md: 0, xs: '0 auto' },
     pt: 0,
@@ -52,7 +53,8 @@ export const style = {
   },
   fileUploader: {
     button: {
-      textAlign: 'center'
+      textAlign: 'center',
+      whiteSpace: 'nowrap'
     },
     root: {
       display: 'flex',

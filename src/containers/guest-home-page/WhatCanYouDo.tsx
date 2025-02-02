@@ -12,7 +12,8 @@ import teachImg from '~/assets/img/guest-home-page/teachImg.png'
 
 import { UserRoleEnum } from '~/types'
 import { styles } from '~/containers/guest-home-page/styles/WhatCanYouDo.styles'
-import SignUpDialog from './signup-dialog/SignUpDialog'
+//import SignUpDialog from './signup-dialog/SignUpDialog'
+import UserStepsWrapper from '~/components/user-steps-wrapper/UserStepsWrapper'
 
 const cardData = [
   {
@@ -35,16 +36,21 @@ const WhatCanYouDo = () => {
   const { t } = useTranslation()
   const { openModal } = useModalContext()
 
-  const openSignUpDialog = useCallback(
-    (actionType: string) => {
-      openModal({ component: <SignUpDialog actionType={actionType} /> })
-    },
-    [openModal]
-  )
-
+  //TEMPORARY code to bypass the sign up dialog
+  const openDialog = useCallback(() => {
+    openModal({ component: <UserStepsWrapper userRole={'tutor'} /> })
+  }, [openModal])
+  //=====================================================================
+  // const openSignUpDialog = useCallback(
+  //   (actionType: string) => {
+  //     openModal({ component: <SignUpDialog actionType={actionType} /> })
+  //   },
+  //   [openModal]
+  // )
   const cards = cardData.map((item) => (
     <InfoCard
-      action={() => openSignUpDialog(item.actionType)}
+      //action={() => openSignUpDialog(item.actionType)}
+      action={openDialog}
       actionLabel={t(item.actionLabel)}
       cardWidth={460}
       description={t(item.description)}
