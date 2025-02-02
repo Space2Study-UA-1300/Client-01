@@ -9,15 +9,14 @@ import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/popup-dialog/PopupDialog.styles'
 import { useState } from 'react'
 import ConfirmationPopUp from '~/components/popup-confirmation/ConfirmationPopUp'
-import { useSingUpFormContext } from '~/context/singUp-context'
-import { useLoginFormContext } from '~/context/login-context'
+import { useFormContext } from '~/context/form-context'
 
 interface PopupDialogProps {
   content: React.ReactNode
   paperProps: PaperProps
   timerId: NodeJS.Timeout | null
   closeModalAfterDelay: (delay?: number) => void
-  type: string | undefined
+  keyForm: string
 }
 
 const PopupDialog: FC<PopupDialogProps> = ({
@@ -25,12 +24,9 @@ const PopupDialog: FC<PopupDialogProps> = ({
   paperProps,
   timerId,
   closeModalAfterDelay,
-  type
+  keyForm
 }) => {
-  const { isDirty: isLoginDirty } = useLoginFormContext()
-  const { isDirty: isSignUpDirty } = useSingUpFormContext()
-
-  const isDirty = type === 'LoginDialog' ? isLoginDirty : isSignUpDirty
+  const { isDirty } = useFormContext(keyForm)
 
   const [open, setOpen] = useState(false)
   const { isMobile } = useBreakpoints()
@@ -38,13 +34,11 @@ const PopupDialog: FC<PopupDialogProps> = ({
 
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
-  const handleDialogClick = () => isDirty && setOpen(true)
+  const handleClickOut = () => (isDirty ? setOpen(true) : closeModal())
+  const handleClickCloseConfirmationPopUp = () => setOpen(false)
   const handleClickCloseAll = () => {
     setOpen(false)
     closeModal()
-  }
-  const handleClickCloseConfirmationPopUp = () => {
-    setOpen(false)
   }
 
   return (
@@ -54,7 +48,7 @@ const PopupDialog: FC<PopupDialogProps> = ({
       disableRestoreFocus
       fullScreen={isMobile}
       maxWidth='xl'
-      onClose={handleDialogClick}
+      onClose={handleClickOut}
       open
     >
       <Box

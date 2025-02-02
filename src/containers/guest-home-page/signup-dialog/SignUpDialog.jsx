@@ -9,13 +9,13 @@ import SignUpForm from '../signup-form/SignUpForm'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
-import { useSingUpFormContext } from '~/context/singUp-context'
+import { useFormContext } from '~/context/form-context'
 
-const SignUpDialog = ({ actionType }) => {
+const SignUpDialog = ({ actionType, keyForm = SignUpDialog.name }) => {
   const { t } = useTranslation()
 
   const { data, errors, handleBlur, handleInputChange, handleSubmit } =
-    useSingUpFormContext()
+    useFormContext(keyForm)
   return (
     <Box sx={styles.root}>
       <Box sx={styles.imgContainer}>

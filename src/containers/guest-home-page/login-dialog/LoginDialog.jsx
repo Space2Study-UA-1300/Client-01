@@ -9,12 +9,12 @@ import loginImg from '~/assets/img/login-dialog/login.svg'
 import { login } from '~/constants'
 
 import styles from '~/containers/guest-home-page/login-dialog/LoginDialog.styles'
-import { useLoginFormContext } from '~/context/login-context'
+import { useFormContext } from '~/context/form-context'
 
-const LoginDialog = () => {
+const LoginDialog = ({ keyForm = LoginDialog.name }) => {
   const { t } = useTranslation()
   const { data, errors, handleBlur, handleInputChange, handleSubmit } =
-    useLoginFormContext()
+    useFormContext(keyForm)
 
   return (
     <Box sx={styles.root}>
