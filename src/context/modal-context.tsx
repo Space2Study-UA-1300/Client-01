@@ -9,8 +9,7 @@ import {
 } from 'react'
 import PopupDialog from '~/components/popup-dialog/PopupDialog'
 import { PaperProps } from '@mui/material/Paper'
-import { LoginFormProvider } from '~/context/login-context'
-import { SingUpFormProvider } from '~/context/singUp-context'
+import { FormProvider } from '~/context/form-context'
 
 interface Component {
   component: React.ReactElement
@@ -35,10 +34,11 @@ const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   const [paperProps, setPaperProps] = useState<PaperProps>({})
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
-  const type =
-    isValidElement(modal) && typeof modal.type !== 'string'
+  const keyForm = useMemo(() => {
+    return isValidElement(modal) && typeof modal.type !== 'string'
       ? modal.type.name
-      : undefined
+      : ''
+  }, [modal])
 
   const closeModal = useCallback(() => {
     setModal(null)
@@ -73,17 +73,15 @@ const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     <ModalContext.Provider value={contextValue}>
       {children}
       {modal && (
-        <LoginFormProvider>
-          <SingUpFormProvider>
-            <PopupDialog
-              closeModalAfterDelay={closeModalAfterDelay}
-              content={modal}
-              paperProps={paperProps}
-              timerId={timer}
-              type={type}
-            />
-          </SingUpFormProvider>
-        </LoginFormProvider>
+        <FormProvider>
+          <PopupDialog
+            closeModalAfterDelay={closeModalAfterDelay}
+            content={modal}
+            keyForm={keyForm}
+            paperProps={paperProps}
+            timerId={timer}
+          />
+        </FormProvider>
       )}
     </ModalContext.Provider>
   )
