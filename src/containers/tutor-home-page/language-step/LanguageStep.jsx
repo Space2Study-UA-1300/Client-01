@@ -42,7 +42,7 @@ const LanguageStep = ({ btnsBox }) => {
         <Autocomplete
           ListboxProps={{
             style: { maxHeight: 200, overflow: 'auto' },
-            onScroll: handleScroll // Ленивая подгрузка при скролле
+            onScroll: handleScroll
           }}
           filterOptions={(options, state) =>
             options.filter((option) =>
@@ -50,7 +50,7 @@ const LanguageStep = ({ btnsBox }) => {
             )
           }
           onChange={(event, newValue) => setSelectedLanguage(newValue)}
-          options={displayedLanguages} // Фиксированный список языков (без ленивой загрузки)
+          options={displayedLanguages}
           renderInput={(params) => (
             <TextField {...params} label='Your native language' />
           )}
