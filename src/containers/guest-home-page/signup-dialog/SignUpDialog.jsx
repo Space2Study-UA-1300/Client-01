@@ -5,19 +5,29 @@ import Typography from '@mui/material/Typography'
 
 import useForm from '~/hooks/use-form'
 
+import Logo from '~/containers/logo/Logo'
 import styles from '~/containers/guest-home-page/signup-dialog/SignUpDialog.styles'
 import GoogleLogin from '~/containers/guest-home-page/google-login/GoogleLogin'
 import SignUpForm from '../signup-form/SignUpForm'
 
+import useBreakpoints from '~/hooks/use-breakpoints'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
+import {
+  firstName,
+  lastName,
+  email,
+  password,
+  confirmPassword
+} from '~/utils/validations/signup'
 
 const SignUpDialog = ({ actionType }) => {
   const { t } = useTranslation()
+  const { isMobile } = useBreakpoints()
 
-  const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
-    {
+  const { handleSubmit, handleInputChange, handleBlur, data, errors, isDirty } =
+    useForm({
       onSubmit: async () => {},
       initialValues: {
         firstName: '',
@@ -25,12 +35,13 @@ const SignUpDialog = ({ actionType }) => {
         email: '',
         password: '',
         confirmPassword: ''
-      }
-    }
-  )
+      },
+      validations: { firstName, lastName, email, password, confirmPassword }
+    })
 
   return (
     <Box sx={styles.root}>
+      {isMobile && <Logo />}
       <Box sx={styles.imgContainer}>
         <Box
           alt='sign'
@@ -51,6 +62,7 @@ const SignUpDialog = ({ actionType }) => {
             handleBlur={handleBlur}
             handleChange={handleInputChange}
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
           />
           <GoogleLogin
             buttonWidth={styles.form.maxWidth}
