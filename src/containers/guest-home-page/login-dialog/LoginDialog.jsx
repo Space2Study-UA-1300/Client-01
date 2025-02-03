@@ -13,7 +13,7 @@ import { useFormContext } from '~/context/form-context'
 
 const LoginDialog = ({ keyForm = LoginDialog.name }) => {
   const { t } = useTranslation()
-  const { data, errors, handleBlur, handleInputChange, handleSubmit } =
+  const { data, errors, handleBlur, handleInputChange, handleSubmit, isDirty } =
     useFormContext(keyForm)
 
   return (
@@ -21,7 +21,6 @@ const LoginDialog = ({ keyForm = LoginDialog.name }) => {
       <Box sx={styles.imgContainer}>
         <Box alt='login' component='img' src={loginImg} sx={styles.img} />
       </Box>
-
       <Box sx={styles.formContainer}>
         <Typography sx={styles.title} variant='h2'>
           {t('login.head')}
@@ -33,6 +32,7 @@ const LoginDialog = ({ keyForm = LoginDialog.name }) => {
             handleBlur={handleBlur}
             handleChange={handleInputChange}
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
           />
           <GoogleLogin buttonWidth={styles.form.maxWidth} type={login} />
         </Box>

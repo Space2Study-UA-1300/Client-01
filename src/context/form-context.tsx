@@ -1,10 +1,16 @@
 import { createContext, useContext, useMemo } from 'react'
 import useForm from '~/hooks/use-form'
 import { snackbarVariants } from '~/constants'
-import { email } from '~/utils/validations/login'
 import { useSnackBarContext } from '~/context/snackbar-context'
 import { useLoginMutation } from '~/services/auth-service'
 import { useModalContext } from '~/context/modal-context'
+import {
+  firstName,
+  lastName,
+  email,
+  password,
+  confirmPassword
+} from '~/utils/validations/signup'
 
 interface FormContext {
   [key: string]: {
@@ -56,7 +62,8 @@ const FormProvider: React.FC<{ children: React.ReactNode }> = ({
       email: '',
       password: '',
       confirmPassword: ''
-    }
+    },
+    validations: { firstName, lastName, email, password, confirmPassword }
   })
 
   // Add all forms to an object and use the component name as keyForm to get the required form, when we use useFormContext

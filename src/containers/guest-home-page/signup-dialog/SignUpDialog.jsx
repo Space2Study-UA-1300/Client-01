@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next'
-
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Logo from '~/containers/logo/Logo'
 import styles from '~/containers/guest-home-page/signup-dialog/SignUpDialog.styles'
 import GoogleLogin from '~/containers/guest-home-page/google-login/GoogleLogin'
 import SignUpForm from '../signup-form/SignUpForm'
 
+import useBreakpoints from '~/hooks/use-breakpoints'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
@@ -13,11 +14,13 @@ import { useFormContext } from '~/context/form-context'
 
 const SignUpDialog = ({ actionType, keyForm = SignUpDialog.name }) => {
   const { t } = useTranslation()
+  const { isMobile } = useBreakpoints()
 
-  const { data, errors, handleBlur, handleInputChange, handleSubmit } =
+  const { data, errors, handleBlur, handleInputChange, handleSubmit, isDirty } =
     useFormContext(keyForm)
   return (
     <Box sx={styles.root}>
+      {isMobile && <Logo />}
       <Box sx={styles.imgContainer}>
         <Box
           alt='sign'
@@ -38,6 +41,7 @@ const SignUpDialog = ({ actionType, keyForm = SignUpDialog.name }) => {
             handleBlur={handleBlur}
             handleChange={handleInputChange}
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
           />
           <GoogleLogin
             buttonWidth={styles.form.maxWidth}
