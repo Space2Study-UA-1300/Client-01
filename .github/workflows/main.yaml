@@ -26,6 +26,9 @@ jobs:
 
       - name : Npm Install
         run: npm install
+      
+      - name: Test and coverage
+        run: npm run jest --coverage
         
       # - name : Lint
       #   run : npm run lint
