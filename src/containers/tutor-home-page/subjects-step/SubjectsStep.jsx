@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 
 import { styles } from '~/containers/tutor-home-page/subjects-step/SubjectsStep.styles'
-import img from '~/assets/img/student-home-page/image.jpg'
+import img from '~/assets/img/tutor-home-page/become-tutor/subject.jpg'
 import SubjectForm from '~/containers/tutor-home-page/subjects-step/subject-form/SubjectForm'
 import Typography from '@mui/material/Typography'
 import { useTranslation } from 'react-i18next'

@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import Box from '@mui/material/Box'
 
-import { styles } from '~/containers/tutor-home-page/subjects-step/subject-form/SubjectForm.styles'
+import { styles } from './SubjectForm.styles'
 
 import AppSelect from '~/components/app-select/AppSelect'
 import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
