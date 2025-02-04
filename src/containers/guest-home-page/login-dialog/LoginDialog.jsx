@@ -4,38 +4,18 @@ import { useTranslation } from 'react-i18next'
 
 import GoogleLogin from '~/containers/guest-home-page/google-login/GoogleLogin'
 import LoginForm from '~/containers/guest-home-page/login-form/LoginForm'
-import useForm from '~/hooks/use-form'
-import { useLoginMutation } from '~/services/auth-service'
-import { useModalContext } from '~/context/modal-context'
-import { useSnackBarContext } from '~/context/snackbar-context'
-import { email } from '~/utils/validations/login'
+
 import loginImg from '~/assets/img/login-dialog/login.svg'
-import { login, snackbarVariants } from '~/constants'
+import { login } from '~/constants'
 
 import styles from '~/containers/guest-home-page/login-dialog/LoginDialog.styles'
+import { useFormContext } from '~/context/form-context'
 
-const LoginDialog = () => {
+const LoginDialog = ({ keyForm = LoginDialog.name }) => {
   const { t } = useTranslation()
-  const { closeModal } = useModalContext()
-  const { setAlert } = useSnackBarContext()
-  const [loginUser] = useLoginMutation()
+  const { data, errors, handleBlur, handleInputChange, handleSubmit, isDirty } =
+    useFormContext(keyForm)
 
-  const { handleSubmit, handleInputChange, handleBlur, data, errors, isDirty } =
-    useForm({
-      onSubmit: async () => {
-        try {
-          await loginUser(data).unwrap()
-          closeModal()
-        } catch (e) {
-          setAlert({
-            severity: snackbarVariants.error,
-            message: `errors.${e.data.code}`
-          })
-        }
-      },
-      initialValues: { email: '', password: '' },
-      validations: { email }
-    })
   return (
     <Box sx={styles.root}>
       <Box sx={styles.imgContainer}>

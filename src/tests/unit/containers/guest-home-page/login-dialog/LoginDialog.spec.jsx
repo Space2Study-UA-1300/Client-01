@@ -88,8 +88,8 @@ describe('Login dialog test', () => {
     const inputPassword = screen.getByLabelText(/common.labels.password/i)
     fireEvent.change(inputPassword, { target: { value: '12345678a/A' } })
 
-    const button = screen.getByText('common.labels.login')
-    fireEvent.click(button)
+    const form = screen.getByTestId('login-form')
+    fireEvent.submit(form)
 
     await waitFor(() => {
       expect(loginUser).toHaveBeenCalledTimes(1)
