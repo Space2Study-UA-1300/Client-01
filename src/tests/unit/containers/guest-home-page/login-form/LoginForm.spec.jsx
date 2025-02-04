@@ -66,13 +66,11 @@ describe('Login form test', () => {
   })
 
   it('should submit', async () => {
-    handleSubmit.mockImplementation((event) => {
-      event.preventDefault()
-    })
     const button = screen.getByText('common.labels.login')
-    fireEvent.click(button)
 
-    expect(handleSubmit).toHaveBeenCalled()
+    fireEvent.submit(button.closest('form'))
+
+    await waitFor(() => expect(handleSubmit).toHaveBeenCalled())
   })
 
   it('should click forgot password text and open forgot password container', async () => {
