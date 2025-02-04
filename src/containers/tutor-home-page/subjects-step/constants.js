@@ -6,6 +6,54 @@ export const categoriesMock = [
   { name: 'History' }
 ]
 
+export const subjectsMock = [
+  {
+    name: 'mathematics',
+    values: [
+      { name: 'Logic' },
+      { name: 'Geometry' },
+      { name: 'Algebra' },
+      { name: "Bul's algebra" }
+    ]
+  },
+  {
+    name: 'languages',
+    values: [
+      { name: 'English' },
+      { name: 'Ukraine' },
+      { name: 'Chinese' },
+      { name: 'Dutch' }
+    ]
+  },
+  {
+    name: 'music',
+    values: [
+      { name: 'Vocal' },
+      { name: 'Piano' },
+      { name: 'Guitar' },
+      { name: 'Violin' }
+    ]
+  },
+  {
+    name: 'computer science',
+    values: [
+      { name: 'FrontEnd (React)' },
+      { name: 'Backend (Node.js)' },
+      { name: 'SQL' },
+      { name: 'MongoDB' }
+    ]
+  },
+  {
+    name: 'history',
+    values: [
+      { name: 'European and world history' },
+      { name: 'Greek history' },
+      { name: 'History of the British Isles' },
+      { name: 'Roman history' }
+    ]
+  }
+]
+
 export const languagesMock = [
   { name: 'Chinese' },
   { name: 'Czech' },
