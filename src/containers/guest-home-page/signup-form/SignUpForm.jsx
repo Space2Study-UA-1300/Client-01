@@ -7,12 +7,15 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Checkbox from '@mui/material/Checkbox'
 import { FormControlLabel } from '@mui/material'
+import { useModalContext } from '~/context/modal-context'
+
 
 import { styles } from '~/containers/guest-home-page/signup-form/SignUpForm.styles'
 import AppTextField from '~/components/app-text-field/AppTextField'
 import AppButton from '~/components/app-button/AppButton'
 
 import useInputVisibility from '~/hooks/use-input-visibility'
+import EmailConfirmModal from '~/containers/email-confirm-modal/EmailConfirmModal'
 
 const SignUpForm = ({
   data,
@@ -31,7 +34,6 @@ const SignUpForm = ({
   const { t } = useTranslation()
   const { authLoading } = useSelector((state) => state.appMain)
   const [isTermsChecked, setIsTermsChecked] = useState(false)
-
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <Box sx={styles.fullName}>
@@ -115,7 +117,7 @@ const SignUpForm = ({
           </Typography>
         }
       />
-
+      <AppButton loading={authLoading} sx={styles.signUpButton} type='submit'>
       <AppButton
         disabled={
           !isTermsChecked ||

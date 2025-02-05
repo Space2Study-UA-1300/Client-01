@@ -15,7 +15,7 @@ const onChange = vi.fn((value) => {
 })
 
 describe('Testing slider with input ', async () => {
-  it('-> it should renders correctly', () => {
+  it('-> should renders correctly', () => {
     const { getByRole } = render(
       <SliderWithInput
         data-testid='slider'
@@ -26,7 +26,7 @@ describe('Testing slider with input ', async () => {
         title={title}
       />
     )
-    it('-> it should call onChange when slider is moved', () => {
+    it('-> should call onChange when slider is moved', () => {
       slider = getByRole('slider')
       fireEvent.mouseDown(slider)
       fireEvent.change(slider, { target: { value: 2 } })
@@ -35,12 +35,12 @@ describe('Testing slider with input ', async () => {
         expect(onChange).toHaveBeenCalledTimes(1)
       })
     })
-    it('-> it should update inputValue correctly when input value is empty', () => {
+    it('-> should update inputValue correctly when input value is empty', () => {
       input = getByRole('input')
       fireEvent.change(input, { target: { value: defaultValue } })
       expect(input.value).toBe(defaultValue.toString())
     })
-    it('-> it should update prices when input is blurred and input is greater than max value', () => {
+    it('-> should update prices when input is blurred and input is greater than max value', () => {
       input = getByRole('input')
       fireEvent.mouseDown(input)
       fireEvent.change(input, { target: { value: 130 } })
@@ -51,7 +51,7 @@ describe('Testing slider with input ', async () => {
       })
       expect(input.value).toBe(max.toString())
     })
-    it('-> it should not update prices when input is blurred and value in input has not changed', () => {
+    it('-> should not update prices when input is blurred and value in input has not changed', () => {
       input = getByRole('input')
       fireEvent.focusIn(input)
       fireEvent.blur(input)

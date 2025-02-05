@@ -48,7 +48,6 @@ interface QuestionEditorProps {
   loading?: boolean
   isQuizQuestion?: boolean
 }
-
 const QuestionEditor: FC<QuestionEditorProps> = ({
   data,
   handleInputChange,

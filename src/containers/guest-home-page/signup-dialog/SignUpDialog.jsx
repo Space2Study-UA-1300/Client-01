@@ -10,10 +10,49 @@ import useBreakpoints from '~/hooks/use-breakpoints'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
+
+import { useSignUpMutation } from '~/services/auth-service'
+import { snackbarVariants } from '~/constants'
+import { useSnackBarContext } from '~/context/snackbar-context'
+import EmailConfirmModal from '~/containers/email-confirm-modal/EmailConfirmModal'
+import { useModalContext } from '~/context/modal-context'
 import { useFormContext } from '~/context/form-context'
+
 
 const SignUpDialog = ({ actionType, keyForm = SignUpDialog.name }) => {
   const { t } = useTranslation()
+  const [signUpUser] = useSignUpMutation()
+  const { setAlert } = useSnackBarContext()
+  const { openModal } = useModalContext()
+
+  const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
+    {
+      onSubmit: async () => {
+        try {
+          const res = await signUpUser({ role: actionType, ...data })
+          console.log(res.data.userEmail)
+          if (res.data.userEmail) {
+            openModal({
+              component: <EmailConfirmModal userEmail={res.data.userEmail} />
+            })
+          }
+        } catch (e) {
+          setAlert({
+            severity: snackbarVariants.error,
+            message: `errors.${e.data.code}`
+          })
+        }
+      },
+      initialValues: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      }
+    }
+  )
+
   const { isMobile } = useBreakpoints()
 
   const { data, errors, handleBlur, handleInputChange, handleSubmit, isDirty } =
