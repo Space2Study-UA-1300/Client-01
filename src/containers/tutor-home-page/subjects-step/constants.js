@@ -8,8 +8,8 @@ export const categoriesMock = [
 
 export const subjectsMock = [
   {
-    name: 'mathematics',
-    values: [
+    category: 'Mathematics',
+    subjects: [
       { name: 'Logic' },
       { name: 'Geometry' },
       { name: 'Algebra' },
@@ -17,8 +17,8 @@ export const subjectsMock = [
     ]
   },
   {
-    name: 'languages',
-    values: [
+    category: 'Languages',
+    subjects: [
       { name: 'English' },
       { name: 'Ukraine' },
       { name: 'Chinese' },
@@ -26,8 +26,8 @@ export const subjectsMock = [
     ]
   },
   {
-    name: 'music',
-    values: [
+    category: 'Music',
+    subjects: [
       { name: 'Vocal' },
       { name: 'Piano' },
       { name: 'Guitar' },
@@ -35,8 +35,8 @@ export const subjectsMock = [
     ]
   },
   {
-    name: 'computer science',
-    values: [
+    category: 'Computer science',
+    subjects: [
       { name: 'FrontEnd (React)' },
       { name: 'Backend (Node.js)' },
       { name: 'SQL' },
@@ -44,8 +44,8 @@ export const subjectsMock = [
     ]
   },
   {
-    name: 'history',
-    values: [
+    category: 'History',
+    subjects: [
       { name: 'European and world history' },
       { name: 'Greek history' },
       { name: 'History of the British Isles' },
