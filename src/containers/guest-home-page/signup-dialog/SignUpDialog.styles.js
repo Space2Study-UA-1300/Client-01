@@ -2,20 +2,23 @@ import { scrollbar } from '~/styles/app-theme/custom-scrollbar'
 
 const style = {
   root: {
-    maxWidth: { sm: 'sm', md: 'md', lg: 'lg' },
-    mt: { xs: '56px', sm: 0 },
+    maxWidth: { xs: 'xs', sm: 'sm', md: 'md', lg: 'lg' },
+    mt: { xs: '16px', sm: 0 },
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: { lg: '122px', md: '40px' },
-    maxHeight: { xs: 'calc(100vh - 56px)', sm: 'calc(100vh - 64px)' }
+    flexDirection: { xs: 'column', md: 'row' },
+    justifyContent: { lg: 'space-between' },
+    alignItems: { xs: 'flex-start', md: 'center' },
+    gap: { xs: '16px', lg: '122px' },
+    maxHeight: { xs: 'calc(100vh - 56px)', sm: 'calc(100vh - 64px)' },
+    p: {
+      sm: '0 103px 80px 103px'
+    }
   },
   imgContainer: {
     width: '450px',
     maxWidth: { md: '50%', lg: '450px' },
     maxHeight: 'inherit',
-    display: { xs: 'none', md: 'flex' },
-    pl: { lg: '96px', md: '30px' }
+    display: { xs: 'none', lg: 'flex' }
   },
   img: {
     objectFit: 'contain',
@@ -28,20 +31,17 @@ const style = {
     boxSizing: 'border-box',
     borderTop: { xs: '1px solid', sm: 'none' },
     borderColor: { xs: 'primary.100' },
-    pt: { xs: '24px', sm: '64px' },
-    pl: { xs: '8px', sm: '96px', md: '16px' }
+    pt: { xs: '24px', sm: '56px', md: '70px' }
   },
   title: {
-    mb: '16px',
-    fontSize: '35px',
-    lineHeight: '48px'
+    mb: '24px',
+    fontSize: '32px',
+    lineHeight: '38px'
   },
   form: {
     overflow: 'auto',
-    maxWidth: { xs: '315px', md: '400px' },
+    maxWidth: { xs: '315px', sm: '400px', md: '400px' },
     pt: '16px',
-    pr: { xs: '8px', sm: '96px', md: '80px', lg: '96px' },
-    pb: { xs: '24px', sm: '64px' },
     ...scrollbar
   }
 }

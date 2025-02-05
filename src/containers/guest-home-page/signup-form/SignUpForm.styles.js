@@ -6,7 +6,8 @@ export const styles = {
   },
   fullName: {
     display: 'flex',
-    gap: '16px'
+    flexDirection: { xs: 'column', sm: 'row' },
+    gap: { sm: '16px', md: '16px' }
   },
   input: {
     maxWidth: '343px'
@@ -16,6 +17,8 @@ export const styles = {
     py: '14px'
   },
   agreement: {
+    display: 'flex',
+    gap: { xs: '3px', md: '5px' },
     fontSize: '14px'
   }
 }
