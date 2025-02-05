@@ -104,7 +104,7 @@ const SubjectForm = ({ handleSubmit }) => {
       </AppButton>
       <Stack direction='row' spacing={'4px'} sx={{ mt: 2, flexWrap: 'wrap' }}>
         <AppChipList
-          defaultQuantity={subjectsChipList.length}
+          defaultQuantity={3}
           handleChipDelete={handleDelete}
           items={subjectsChipList}
         />
