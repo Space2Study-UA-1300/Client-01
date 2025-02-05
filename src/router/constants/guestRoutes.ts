@@ -6,6 +6,7 @@ export const guestRoutes = {
   admin: { route: 'admin', path: 'admin' },
   error: { route: 'error', path: 'error' },
   about: { route: 'about', path: 'about' },
+  confirmEmail: { route: 'confirm-email-auth', path: 'confirm-email-auth' },
   privacyPolicy: { route: 'privacy-policy', path: 'privacy-policy' },
   termOfUse: { route: '#', path: '#' },
   navBar: {

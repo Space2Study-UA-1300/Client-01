@@ -26,12 +26,12 @@ jobs:
 
       - name : Npm Install
         run: npm install
+      
+      - name: Test and coverage
+        run: npm test --coverage
         
       # - name : Lint
       #   run : npm run lint
-        
-      - name : Test
-        run: npm test
         
       - name : Check Path
         run: ls -la && pwd && ls -la /

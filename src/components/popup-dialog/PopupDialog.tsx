@@ -5,28 +5,39 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import { PaperProps } from '@mui/material'
 import { useModalContext } from '~/context/modal-context'
-
 import useBreakpoints from '~/hooks/use-breakpoints'
 import { styles } from '~/components/popup-dialog/PopupDialog.styles'
+import { useState } from 'react'
+import ConfirmationPopUp from '~/components/popup-confirmation/ConfirmationPopUp'
+import { useFormContext } from '~/context/form-context'
 
 interface PopupDialogProps {
   content: React.ReactNode
   paperProps: PaperProps
   timerId: NodeJS.Timeout | null
   closeModalAfterDelay: (delay?: number) => void
+  keyForm: string
 }
 
 const PopupDialog: FC<PopupDialogProps> = ({
   content,
   paperProps,
   timerId,
-  closeModalAfterDelay
+  closeModalAfterDelay,
+  keyForm
 }) => {
+  const { isDirty } = useFormContext(keyForm)
+
+  const [open, setOpen] = useState(false)
   const { isMobile } = useBreakpoints()
   const { closeModal } = useModalContext()
+
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
-  const handleDialogClick: React.MouseEventHandler<HTMLDivElement> = () => {
+  const handleClickOut = () => (isDirty ? setOpen(true) : closeModal())
+  const handleClickCloseConfirmationPopUp = () => setOpen(false)
+  const handleClickCloseAll = () => {
+    setOpen(false)
     closeModal()
   }
 
@@ -37,7 +48,7 @@ const PopupDialog: FC<PopupDialogProps> = ({
       disableRestoreFocus
       fullScreen={isMobile}
       maxWidth='xl'
-      onClose={handleDialogClick}
+      onClose={handleClickOut}
       open
     >
       <Box
@@ -50,6 +61,11 @@ const PopupDialog: FC<PopupDialogProps> = ({
           <CloseIcon />
         </IconButton>
         <Box sx={styles.contentWraper}>{content}</Box>
+        <ConfirmationPopUp
+          handleClickNo={handleClickCloseConfirmationPopUp}
+          handleClickYes={handleClickCloseAll}
+          open={open}
+        />
       </Box>
     </Dialog>
   )

@@ -8,6 +8,7 @@ import { theme } from '~/styles/app-theme/custom-mui.styles'
 import { ModalProvider } from '~/context/modal-context'
 import { ConfirmationDialogProvider } from '~/context/confirm-context'
 import { SnackBarProvider } from '~/context/snackbar-context'
+import { FormProvider } from '~/context/form-context'
 
 import { vi } from 'vitest'
 import MockAdapter from 'axios-mock-adapter'
@@ -26,17 +27,23 @@ export const renderWithProviders = (
     <Provider store={store}>
       <MemoryRouter initialEntries={[initialEntries]}>
         <ThemeProvider theme={theme}>
-          <SnackBarProvider>
-            <ConfirmationDialogProvider>
-              <ModalProvider>{children}</ModalProvider>
-            </ConfirmationDialogProvider>
-          </SnackBarProvider>
+          <ContextProviders>{children}</ContextProviders>
         </ThemeProvider>
       </MemoryRouter>
     </Provider>
   )
   return render(ui, { wrapper: Wrapper, ...renderOptions })
 }
+
+const ContextProviders = ({ children }) => (
+  <SnackBarProvider>
+    <ConfirmationDialogProvider>
+      <ModalProvider>
+        <FormProvider>{children} </FormProvider>
+      </ModalProvider>
+    </ConfirmationDialogProvider>
+  </SnackBarProvider>
+)
 
 export const getFakeTestEvent = (key, value) => ({
   preventDefault: vi.fn(),

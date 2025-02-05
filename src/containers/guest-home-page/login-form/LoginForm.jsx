@@ -17,7 +17,8 @@ const LoginForm = ({
   handleChange,
   handleBlur,
   data,
-  errors
+  errors,
+  isDirty
 }) => {
   const { inputVisibility: passwordVisibility, showInputText: showPassword } =
     useInputVisibility(errors.password)
@@ -33,7 +34,12 @@ const LoginForm = ({
   }
 
   return (
-    <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
+    <Box
+      component='form'
+      data-testid='login-form'
+      onSubmit={handleSubmit}
+      sx={styles.form}
+    >
       <AppTextField
         autoFocus
         data-testid={'email'}
@@ -70,7 +76,12 @@ const LoginForm = ({
         {t('login.forgotPassword')}
       </Typography>
 
-      <AppButton loading={authLoading} sx={styles.loginButton} type='submit'>
+      <AppButton
+        disabled={!isDirty}
+        loading={authLoading}
+        sx={styles.loginButton}
+        type='submit'
+      >
         {t('common.labels.login')}
       </AppButton>
     </Box>

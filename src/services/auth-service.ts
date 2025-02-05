@@ -23,7 +23,8 @@ export const AuthService = {
   },
   confirmEmail: (confirmToken: string): Promise<AxiosResponse> => {
     const confirmUrl = createUrlPath(URLs.auth.confirm, confirmToken)
-    return axiosClient.get(confirmUrl)
+    console.log(confirmUrl)
+    return axiosClient.get(confirmUrl, { data: { confirmToken: confirmToken } })
   },
   forgotPassword: (userEmail: string): Promise<AxiosResponse> => {
     return axiosClient.post(URLs.auth.forgotPassword, userEmail)
@@ -36,6 +37,8 @@ export const AuthService = {
     return axiosClient.patch(confirmUrl, newPassword)
   }
 }
+export const { refresh, confirmEmail, forgotPassword, resetPassword } =
+  AuthService
 
 export const authService = appApi.injectEndpoints({
   endpoints: (build) => ({

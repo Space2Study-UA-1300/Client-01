@@ -20,6 +20,7 @@ import { home } from '~/router/constants/crumbs'
 
 const HomeRoute = lazy(() => import('~/router/helpers/HomeRoute'))
 const Logout = lazy(() => import('~/pages/logout/Logout'))
+const ConfirEmail = lazy(() => import('~/pages/confirm-email/ConfirmEmail'))
 
 export const routerConfig = (
   <Route
@@ -33,6 +34,10 @@ export const routerConfig = (
       {authRouter}
       {tutorRouter}
       {studentRouter}
+      <Route
+        element={<ConfirEmail />}
+        path={guestRoutes.confirmEmail.route}
+      ></Route>
       <Route path={guestRoutes.error.route}>{errorRouter}</Route>
       <Route element={<Logout />} path={authRoutes.accountMenu.logout.route} />
     </Route>

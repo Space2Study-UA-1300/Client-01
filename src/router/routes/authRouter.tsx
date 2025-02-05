@@ -12,8 +12,6 @@ import {
   editQuestion,
   findOffers
 } from '~/router/constants/crumbs'
-//import PrivateRoute from '~/router/helpers/PrivateRoute'
-//import { UserRoleEnum } from '~/types'
 import { userProfileLoader } from '../constants/loaders'
 
 const Categories = lazy(() => import('~/pages/categories/Categories'))
