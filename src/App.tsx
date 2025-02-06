@@ -6,15 +6,18 @@ import { ConfirmationDialogProvider } from '~/context/confirm-context'
 import { SnackBarProvider } from '~/context/snackbar-context'
 
 import { theme } from './styles/app-theme/custom-mui.styles'
+import { RoleProvider } from './context/role-context'
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <SnackBarProvider>
-        <ConfirmationDialogProvider>
-          <ModalProvider>
-            <Outlet />
-          </ModalProvider>
-        </ConfirmationDialogProvider>
+        <RoleProvider>
+          <ConfirmationDialogProvider>
+            <ModalProvider>
+              <Outlet />
+            </ModalProvider>
+          </ConfirmationDialogProvider>
+        </RoleProvider>
       </SnackBarProvider>
     </ThemeProvider>
   )
