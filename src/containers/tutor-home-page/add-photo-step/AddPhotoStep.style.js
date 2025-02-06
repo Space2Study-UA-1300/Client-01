@@ -2,9 +2,11 @@ import { fadeAnimation } from '~/styles/app-theme/custom-animations'
 
 export const style = {
   root: {
-    display: 'flex',
+    display: { xs: 'block', md: 'grid' },
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateAreas: `"UploadBox FileUploaderBox" "empty BtnsBox"`,
     justifyContent: 'space-between',
-    gap: '40px',
+    columnGap: '40px',
     height: { sm: '485px' },
     paddingBottom: { sm: '210px', md: '0px' },
     ...fadeAnimation
@@ -25,6 +27,7 @@ export const style = {
     flex: 1
   },
   uploadBox: {
+    gridArea: 'UploadBox',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -43,6 +46,7 @@ export const style = {
     borderColor: 'primary.900'
   },
   rigthBox: {
+    gridArea: 'FileUploaderBox',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
@@ -71,6 +75,10 @@ export const style = {
       maxWidth: '270px',
       overflow: 'auto',
       mb: '10px'
+    },
+    btnsBox: {
+      gridArea: 'BtnsBox',
+      gridColumn: '2'
     }
   }
 }

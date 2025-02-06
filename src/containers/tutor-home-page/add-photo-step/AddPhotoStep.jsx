@@ -96,20 +96,19 @@ const AddPhotoStep = ({ btnsBox }) => {
             )}
           </AppButton>
         </Box>
-        <Typography
-          sx={{ ...appTypography.caption, color: 'primary.900', mb: 'auto' }}
-        >
+        <Typography sx={{ ...appTypography.caption, color: 'primary.900' }}>
           {image ? '' : 'Maximum file size should be less than 10 MB'}
         </Typography>
-        {btnsBox}
       </Box>
     )
   }
 
   return (
     <Box sx={style.root}>
-      <UploadBox />
       <FileUploaderBox />
+      <UploadBox />
+      <Box sx={{ gridArea: 'empty', visibility: 'hidden' }} />
+      <Box sx={style.btnsBox}>{btnsBox}</Box>
     </Box>
   )
 }
