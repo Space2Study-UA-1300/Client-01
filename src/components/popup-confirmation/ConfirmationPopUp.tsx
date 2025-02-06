@@ -26,6 +26,7 @@ const ConfirmationPopUp: React.FC<ConfirmationPopUpProps> = ({
     <Dialog
       aria-describedby='alert-dialog-description'
       aria-labelledby='alert-dialog-title'
+      onClose={() => handleClickNo()}
       open={open}
     >
       <IconButton
