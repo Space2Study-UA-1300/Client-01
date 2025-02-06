@@ -22,6 +22,7 @@ export const styles = {
     color: 'primary.700',
     typography: 'subtitle2',
     borderRadius: '10px',
+    letterSpacing: '0.25%',
     height: 'fit-content',
     '& .MuiChip-label': {
       p: '7px 14px',

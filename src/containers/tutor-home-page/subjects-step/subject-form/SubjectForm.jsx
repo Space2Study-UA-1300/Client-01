@@ -1,76 +1,114 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
 
 import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
 
 import { styles } from './SubjectForm.styles'
 
 import AppSelect from '~/components/app-select/AppSelect'
 import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
 import AppButton from '~/components/app-button/AppButton'
+import AppChipList from '~/components/app-chips-list/AppChipList'
 
-import {
-  categoriesMock,
-  subjectsMock
-} from '~/containers/tutor-home-page/subjects-step/constants.js'
+import { useStepContext } from '~/context/step-context'
+import { subjectsMock } from '~/containers/tutor-home-page/subjects-step/constants.js'
 
 const SubjectForm = ({ handleSubmit }) => {
-  const [searchCategory, setSearchCategory] = useState('')
-  const [searchSubject, setSearchSubject] = useState('')
-  const [inputCategory, setInputCategory] = useState('')
-
+  const { stepData } = useStepContext()
   const { t } = useTranslation()
 
-  const categories = (value = []) =>
-    value.map(({ name }) => {
-      return {
-        title: name,
-        value: name.toLocaleLowerCase()
-      }
-    })
+  const [inputCategory, setInputCategory] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedSubject, setSelectedSubject] = useState('')
+  const [subjectsChipList, setSubjectsChipList] = useState([
+    ...stepData.subjects
+  ])
+
+  useEffect(() => {
+    stepData.subjects = subjectsChipList
+  }, [subjectsChipList, stepData])
 
   const getCategoryArray = (value = []) => {
     const newCatArr = []
-    value.map(({ name }) => newCatArr.push(name))
+    value.map(({ category }) => newCatArr.push(category))
 
     return newCatArr
   }
 
-  const subjects = subjectsMock.find(
-    (item) => item.name === searchCategory.toLocaleLowerCase()
+  const getCategorySubjects = subjectsMock.find(
+    ({ category }) =>
+      category.toLowerCase() === selectedCategory.toLocaleLowerCase()
   )
 
-  const onInputChange = (_, value) => setInputCategory(value)
+  const subjectFields = (value = []) =>
+    value.map(({ name }) => {
+      return {
+        title: name,
+        value: name
+      }
+    })
 
-  const handleAutoCompleteChange = (_, value) => {
-    value ? setSearchCategory(value) : setSearchCategory('')
+  const onInputChangeCategory = (_, value) => setInputCategory(value)
+
+  const handleAutoCompleteChangeCategory = (_, value) => {
+    value ? setSelectedCategory(value) : setSelectedCategory('')
   }
 
-  const handleChangeSubject = (event) => setSearchSubject(event)
+  const handleSelectSubject = (event) => {
+    setSelectedSubject(event)
+  }
+
+  const handleDelete = (chipToDelete) => {
+    const filteredSubject = subjectsChipList.filter(
+      (chip) => chip !== chipToDelete
+    )
+    setSubjectsChipList(() => filteredSubject)
+  }
+
+  const addCategory = () => {
+    if (selectedSubject) {
+      if (!subjectsChipList.includes(selectedSubject)) {
+        setSubjectsChipList(() => [...subjectsChipList, selectedSubject])
+      }
+      setSelectedCategory('')
+      setSelectedSubject('')
+    }
+  }
 
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <AppAutoComplete
         inputValue={inputCategory}
-        onChange={handleAutoCompleteChange}
-        onInputChange={onInputChange}
-        options={getCategoryArray(categoriesMock)}
-        sx={{ marginBottom: '20px' }}
+        isOptionEqualToValue={(option, value) => option === value}
+        onChange={handleAutoCompleteChangeCategory}
+        onInputChange={onInputChangeCategory}
+        options={getCategoryArray(subjectsMock)}
+        sx={{ mb: '20px' }}
         textFieldProps={{
           label: t('becomeTutor.categories.mainSubjectsLabel')
         }}
-        value={searchCategory}
+        value={selectedCategory || null}
       />
       <AppSelect
-        fields={categories(searchCategory ? subjects.values : [])}
+        fields={subjectFields(
+          selectedCategory ? getCategorySubjects.subjects : []
+        )}
         label={t('becomeTutor.categories.subjectLabel')}
-        setValue={handleChangeSubject}
-        sx={{ marginBottom: '16px' }}
-        value={searchSubject}
+        setValue={handleSelectSubject}
+        sx={{ mb: '16px' }}
+        value={selectedSubject}
       />
-      <AppButton onClick={() => {}} sx={styles.button}>
+      <AppButton onClick={addCategory} sx={styles.button}>
         {t('becomeTutor.categories.btnText')}
       </AppButton>
+      <Stack direction='row' spacing={'4px'} sx={{ mt: 2, flexWrap: 'wrap' }}>
+        <AppChipList
+          defaultQuantity={3}
+          handleChipDelete={handleDelete}
+          items={subjectsChipList}
+        />
+      </Stack>
     </Box>
   )
 }
