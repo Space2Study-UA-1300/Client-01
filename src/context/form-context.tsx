@@ -3,7 +3,9 @@ import useForm from '~/hooks/use-form'
 import { snackbarVariants } from '~/constants'
 import { useSnackBarContext } from '~/context/snackbar-context'
 import { useLoginMutation } from '~/services/auth-service'
+import { useSignUpMutation } from '~/services/auth-service'
 import { useModalContext } from '~/context/modal-context'
+import { useRole } from './role-context'
 import {
   firstName,
   lastName,
@@ -11,6 +13,7 @@ import {
   password,
   confirmPassword
 } from '~/utils/validations/signup'
+import EmailConfirmModal from '~/containers/email-confirm-modal/EmailConfirmModal'
 
 interface FormContext {
   [key: string]: {
@@ -28,7 +31,6 @@ interface ErrorResponse {
     code: string
   }
 }
-
 const FormContext = createContext({} as FormContext)
 
 const FormProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -37,6 +39,9 @@ const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   const { setAlert } = useSnackBarContext()
   const [loginUser] = useLoginMutation()
   const { closeModal } = useModalContext()
+  const [signUpUser] = useSignUpMutation()
+  const { openModal } = useModalContext()
+  const { role } = useRole()
   const loginDialog = useForm({
     onSubmit: async () => {
       try {
@@ -55,7 +60,28 @@ const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   })
 
   const signUpDialog = useForm({
-    onSubmit: async () => {},
+    onSubmit: async () => {
+      try {
+        const res = await signUpUser({ role, ...signUpDialog.data })
+        if ('data' in res && res.data.userEmail) {
+          openModal({
+            component: (
+              <EmailConfirmModal
+                confirmToken=''
+                openModal={openModal}
+                userEmail={res.data.userEmail}
+              />
+            )
+          })
+        }
+      } catch (e) {
+        const error = e as ErrorResponse
+        setAlert({
+          severity: snackbarVariants.error,
+          message: `errors.${error.data.code}`
+        })
+      }
+    },
     initialValues: {
       firstName: '',
       lastName: '',
