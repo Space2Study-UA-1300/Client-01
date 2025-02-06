@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Checkbox from '@mui/material/Checkbox'
 import { FormControlLabel } from '@mui/material'
+
 import { styles } from '~/containers/guest-home-page/signup-form/SignUpForm.styles'
 import AppTextField from '~/components/app-text-field/AppTextField'
 import AppButton from '~/components/app-button/AppButton'
@@ -28,11 +30,12 @@ const SignUpForm = ({
 
   const { t } = useTranslation()
   const { authLoading } = useSelector((state) => state.appMain)
+  const [isTermsChecked, setIsTermsChecked] = useState(false)
+
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <Box sx={styles.fullName}>
         <AppTextField
-          autoFocus
           data-testid={'firstName'}
           errorMsg={t(errors.firstName)}
           fullWidth
@@ -46,7 +49,6 @@ const SignUpForm = ({
           value={data.firstName}
         />
         <AppTextField
-          autoFocus
           data-testid={'lastName'}
           errorMsg={t(errors.lastName)}
           fullWidth
@@ -61,7 +63,6 @@ const SignUpForm = ({
         />
       </Box>
       <AppTextField
-        autoFocus
         data-testid={'email'}
         errorMsg={t(errors.email)}
         fullWidth
@@ -89,7 +90,7 @@ const SignUpForm = ({
 
       <AppTextField
         InputProps={confirmPasswordVisibility}
-        errorMsg={t(errors.password)}
+        errorMsg={t(errors.confirmPassword)}
         fullWidth
         label={t('common.labels.confirmPassword')}
         onBlur={handleBlur('confirmPassword')}
@@ -100,7 +101,12 @@ const SignUpForm = ({
       />
 
       <FormControlLabel
-        control={<Checkbox disabled />}
+        control={
+          <Checkbox
+            onChange={() => setIsTermsChecked(!isTermsChecked)}
+            value={isTermsChecked}
+          />
+        }
         label={
           <Typography sx={styles.agreement}>
             {t('signup.iAgree')}{' '}
@@ -109,7 +115,17 @@ const SignUpForm = ({
           </Typography>
         }
       />
-      <AppButton loading={authLoading} sx={styles.signUpButton} type='submit'>
+
+      <AppButton
+        disabled={
+          !isTermsChecked ||
+          Object.values(errors).some((error) => error) ||
+          Object.values(data).some((value) => !value.trim())
+        }
+        loading={authLoading}
+        sx={styles.signUpButton}
+        type='submit'
+      >
         {t('common.labels.signup')}
       </AppButton>
     </Box>
