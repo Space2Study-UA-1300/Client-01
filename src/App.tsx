@@ -6,7 +6,6 @@ import { ConfirmationDialogProvider } from '~/context/confirm-context'
 import { SnackBarProvider } from '~/context/snackbar-context'
 
 import { theme } from './styles/app-theme/custom-mui.styles'
-
 const App = () => {
   return (
     <ThemeProvider theme={theme}>

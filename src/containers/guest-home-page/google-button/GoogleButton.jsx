@@ -12,10 +12,12 @@ import { styles } from '~/containers/guest-home-page/google-button/GoogleButton.
 
 const GoogleButton = ({ role, route, buttonWidth, type }) => {
   const ref = useHref(route)
-  const mediaQuery = useBreakpoints().isLaptopAndAbove ? 'md' : 'xs'
   const { closeModal } = useModalContext()
   const { setAlert } = useSnackBarContext()
   const [googleAuth] = useGoogleAuthMutation()
+  const { isLaptopAndAbove, isTablet } = useBreakpoints()
+
+  const mediaQuery = isLaptopAndAbove ? 'md' : isTablet ? 'sm' : 'xs'
 
   const handleCredentialResponse = useCallback(
     async (token) => {

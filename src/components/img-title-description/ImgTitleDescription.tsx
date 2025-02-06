@@ -24,7 +24,6 @@ const ImgTitleDescription: FC<ImgTitleDescriptionProps> = ({
   return (
     <Box sx={style.root}>
       <Box alt='info' component={'img'} src={img} sx={style.img} />
-
       <TitleWithDescription
         description={description}
         style={style.titleWithDescription}

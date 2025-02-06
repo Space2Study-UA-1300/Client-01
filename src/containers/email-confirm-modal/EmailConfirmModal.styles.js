@@ -4,7 +4,9 @@ export const styles = {
     padding: { xs: 4, md: 11 },
     textAlign: 'center',
     boxShadow: 'none',
-    borderRadius: '8px'
+    borderRadius: '8px',
+    position: 'sticky',
+    top: '50%'
   },
   button: {
     size: 'large',

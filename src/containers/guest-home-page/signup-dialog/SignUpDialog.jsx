@@ -1,24 +1,48 @@
 import { useTranslation } from 'react-i18next'
-
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-
-import useForm from '~/hooks/use-form'
-
+import Logo from '~/containers/logo/Logo'
 import styles from '~/containers/guest-home-page/signup-dialog/SignUpDialog.styles'
 import GoogleLogin from '~/containers/guest-home-page/google-login/GoogleLogin'
 import SignUpForm from '../signup-form/SignUpForm'
 
+import useBreakpoints from '~/hooks/use-breakpoints'
 import studentImg from '~/assets/img/signup-dialog/student.svg'
 import tutorImg from '~/assets/img/signup-dialog/tutor.svg'
 import { signup } from '~/constants'
 
-const SignUpDialog = ({ actionType }) => {
+import { useSignUpMutation } from '~/services/auth-service'
+import { snackbarVariants } from '~/constants'
+import { useSnackBarContext } from '~/context/snackbar-context'
+import EmailConfirmModal from '~/containers/email-confirm-modal/EmailConfirmModal'
+import { useModalContext } from '~/context/modal-context'
+import { useFormContext } from '~/context/form-context'
+
+
+const SignUpDialog = ({ actionType, keyForm = SignUpDialog.name }) => {
   const { t } = useTranslation()
+  const [signUpUser] = useSignUpMutation()
+  const { setAlert } = useSnackBarContext()
+  const { openModal } = useModalContext()
 
   const { handleSubmit, handleInputChange, handleBlur, data, errors } = useForm(
     {
-      onSubmit: async () => {},
+      onSubmit: async () => {
+        try {
+          const res = await signUpUser({ role: actionType, ...data })
+          console.log(res.data.userEmail)
+          if (res.data.userEmail) {
+            openModal({
+              component: <EmailConfirmModal userEmail={res.data.userEmail} />
+            })
+          }
+        } catch (e) {
+          setAlert({
+            severity: snackbarVariants.error,
+            message: `errors.${e.data.code}`
+          })
+        }
+      },
       initialValues: {
         firstName: '',
         lastName: '',
@@ -29,8 +53,13 @@ const SignUpDialog = ({ actionType }) => {
     }
   )
 
+  const { isMobile } = useBreakpoints()
+
+  const { data, errors, handleBlur, handleInputChange, handleSubmit, isDirty } =
+    useFormContext(keyForm)
   return (
     <Box sx={styles.root}>
+      {isMobile && <Logo />}
       <Box sx={styles.imgContainer}>
         <Box
           alt='sign'
@@ -51,6 +80,7 @@ const SignUpDialog = ({ actionType }) => {
             handleBlur={handleBlur}
             handleChange={handleInputChange}
             handleSubmit={handleSubmit}
+            isDirty={isDirty}
           />
           <GoogleLogin
             buttonWidth={styles.form.maxWidth}
