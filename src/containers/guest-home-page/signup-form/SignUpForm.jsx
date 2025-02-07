@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Checkbox from '@mui/material/Checkbox'
@@ -11,7 +10,6 @@ import { FormControlLabel } from '@mui/material'
 import { styles } from '~/containers/guest-home-page/signup-form/SignUpForm.styles'
 import AppTextField from '~/components/app-text-field/AppTextField'
 import AppButton from '~/components/app-button/AppButton'
-
 import useInputVisibility from '~/hooks/use-input-visibility'
 
 const SignUpForm = ({

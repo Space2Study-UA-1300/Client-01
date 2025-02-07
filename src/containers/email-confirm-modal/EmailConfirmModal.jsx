@@ -18,7 +18,6 @@ const EmailConfirmModal = ({ confirmToken, openModal, userEmail }) => {
   const [statusCode, setStatusCode] = useState(null)
   useEffect(() => {
     fetch('/').then((response) => {
-      console.log('response.status =', response.status)
       setStatusCode(response.status)
     })
   }, [])

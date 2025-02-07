@@ -53,7 +53,6 @@ const PopupDialog: FC<PopupDialogProps> = ({
     >
       <Box
         data-testid='popupContent'
-        onClick={(e) => e.stopPropagation()}
         onMouseLeave={handleMouseLeave}
         onMouseOver={handleMouseOver}
         sx={styles.box}
