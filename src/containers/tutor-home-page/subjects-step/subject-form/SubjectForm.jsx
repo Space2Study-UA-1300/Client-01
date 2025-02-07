@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 import { styles } from './SubjectForm.styles'
 
@@ -29,17 +30,32 @@ const SubjectForm = ({ handleSubmit }) => {
     stepData.subjects = subjectsChipList
   }, [subjectsChipList, stepData])
 
-  const getCategoryArray = (value = []) => {
-    const newCatArr = []
-    value.map(({ category }) => newCatArr.push(category))
+  const categoryArray = () => {
+    const newArray = []
+    subjectsMock.map(({ category, subjects }) => {
+      subjects.map(({ name }) =>
+        newArray.push({
+          lable: category,
+          subject: name
+        })
+      )
+    })
 
-    return newCatArr
+    return newArray.sort((a, b) => {
+      let firstSubject = a.subject.toLowerCase()
+      let secondSubject = b.subject.toLowerCase()
+
+      return firstSubject < secondSubject
+        ? -1
+        : firstSubject > secondSubject
+          ? 1
+          : 0
+    })
   }
 
-  const getCategorySubjects = subjectsMock.find(
-    ({ category }) =>
-      category.toLowerCase() === selectedCategory.toLocaleLowerCase()
-  )
+  const getCategorySubjects = subjectsMock.find(({ category }) => {
+    return category.toLowerCase() === selectedCategory.toLocaleLowerCase()
+  })
 
   const subjectFields = (value = []) =>
     value.map(({ name }) => {
@@ -49,10 +65,17 @@ const SubjectForm = ({ handleSubmit }) => {
       }
     })
 
-  const onInputChangeCategory = (_, value) => setInputCategory(value)
+  const onInputChangeCategory = (_, value) => {
+    setSelectedSubject('')
+    setSelectedCategory('')
+    setInputCategory(value)
+  }
 
   const handleAutoCompleteChangeCategory = (_, value) => {
-    value ? setSelectedCategory(value) : setSelectedCategory('')
+    if (value) {
+      setSelectedCategory(value.lable)
+      setSelectedSubject(value.subject)
+    }
   }
 
   const handleSelectSubject = (event) => {
@@ -73,22 +96,52 @@ const SubjectForm = ({ handleSubmit }) => {
       }
       setSelectedCategory('')
       setSelectedSubject('')
+      setInputCategory('')
     }
+  }
+
+  const renderOptions = (props, { lable, subject }) => {
+    const { ...optionProps } = props
+    return (
+      <Box component='li' sx={{ height: '48px' }} {...optionProps}>
+        {subject}
+        <Typography sx={{ color: 'grey', ml: '10px' }}>
+          Category: {lable}
+        </Typography>
+      </Box>
+    )
+  }
+
+  const filterOptions = (options, state) => {
+    const filterValue = state.inputValue.toLowerCase()
+    return options.filter(
+      (option) =>
+        option.subject.toLowerCase().includes(filterValue) ||
+        option.lable.toLowerCase().includes(filterValue)
+    )
   }
 
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <AppAutoComplete
+        disableClearable={false}
+        filterOptions={filterOptions}
+        freeSolo
+        getOptionLabel={(option) => option?.lable ?? ''}
         inputValue={inputCategory}
-        isOptionEqualToValue={(option, value) => option === value}
+        isOptionEqualToValue={(option, value) => option?.lable === value?.lable}
         onChange={handleAutoCompleteChangeCategory}
         onInputChange={onInputChangeCategory}
-        options={getCategoryArray(subjectsMock)}
+        options={categoryArray()}
+        renderOption={(props, option) => renderOptions(props, option)}
         sx={{ mb: '20px' }}
         textFieldProps={{
           label: t('becomeTutor.categories.mainSubjectsLabel')
         }}
-        value={selectedCategory || null}
+        value={
+          categoryArray().find((option) => option.lable === selectedCategory) ||
+          null
+        }
       />
       <AppSelect
         fields={subjectFields(
@@ -96,7 +149,7 @@ const SubjectForm = ({ handleSubmit }) => {
         )}
         label={t('becomeTutor.categories.subjectLabel')}
         setValue={handleSelectSubject}
-        sx={{ mb: '16px' }}
+        sx={(styles.selectField, { mb: '16px' })}
         value={selectedSubject}
       />
       <AppButton onClick={addCategory} sx={styles.button}>
@@ -104,7 +157,7 @@ const SubjectForm = ({ handleSubmit }) => {
       </AppButton>
       <Stack direction='row' spacing={'4px'} sx={{ mt: 2, flexWrap: 'wrap' }}>
         <AppChipList
-          defaultQuantity={3}
+          defaultQuantity={2}
           handleChipDelete={handleDelete}
           items={subjectsChipList}
         />
