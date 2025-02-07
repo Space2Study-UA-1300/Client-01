@@ -5,17 +5,17 @@ export const styles = {
     minWidth: { sm: '340px' }
   },
   button: {
-    fontWeight: 500,
-    fontSize: '16px',
-    lineHeight: '24px',
-    letterSpacing: '0.5px',
-    textTransform: 'initial',
-    backgroundColor: '#eceff1',
-    color: '#263238',
+    typography: 'button',
+    backgroundColor: 'basic.grey',
+    color: 'primary.700',
     width: '100%',
+    height: '48px',
     boxShadow: 'none',
     '&:hover': {
-      backgroundColor: '#eceff1'
+      backgroundColor: 'basic.grey'
     }
+  },
+  selectField: {
+    height: '48px'
   }
 }
