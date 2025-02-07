@@ -11,10 +11,9 @@ import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
 import AppButton from '~/components/app-button/AppButton'
 import AppChipList from '~/components/app-chips-list/AppChipList'
 
-import { useStepContext } from '~/context/step-context'
-
 import { subjectsMock } from '~/containers/tutor-home-page/subjects-step/constants.js'
 import Typography from '@mui/material/Typography'
+import { useStepContext } from '~/context/step-context'
 
 const SubjectForm = ({ handleSubmit }) => {
   const { stepData } = useStepContext()
