@@ -10,6 +10,7 @@ import FeatureBlock from '~/containers/guest-home-page/FeatureBlock'
 import Welcome from '~/containers/guest-home-page/Welcome'
 import WhatCanYouDo from '~/containers/guest-home-page/WhatCanYouDo'
 import HowItWorks from '~/containers/guest-home-page/how-it-works/HowItWorks'
+import CategoryList from '~/containers/student-home-page/category-list/CategoryList'
 import LoginDialog from '~/containers/guest-home-page/login-dialog/LoginDialog'
 import ResetPassword from '~/containers/guest-home-page/reset-password/ResetPassword'
 import WhoWeAre from '~/containers/guest-home-page/who-we-are/WhoWeAre'
@@ -52,6 +53,7 @@ const GuestHomePage = () => {
         <FeatureBlock items={descriptionTimes} />
         <WhatCanYouDo />
         <HowItWorks />
+        <CategoryList />
         <WhoWeAre />
       </PageWrapper>
     </Box>
