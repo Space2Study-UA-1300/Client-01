@@ -16,7 +16,13 @@ const StudentHome = () => {
   useEffect(() => {
     if (isFirstLogin) {
       openModal({
-        component: <UserStepsWrapper userRole={userRole} />,
+        component: (
+          <UserStepsWrapper
+            closeOnClickOutside={false}
+            closeOnIconClick={false}
+            userRole={userRole}
+          />
+        ),
         paperProps: {
           sx: {
             maxHeight: { sm: '652px' },
