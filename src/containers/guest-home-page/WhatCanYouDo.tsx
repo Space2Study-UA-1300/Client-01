@@ -13,6 +13,7 @@ import teachImg from '~/assets/img/guest-home-page/teachImg.png'
 import { UserRoleEnum } from '~/types'
 import { styles } from '~/containers/guest-home-page/styles/WhatCanYouDo.styles'
 import SignUpDialog from './signup-dialog/SignUpDialog'
+import { useRole } from '~/context/role-context'
 
 const cardData = [
   {
@@ -34,12 +35,14 @@ const cardData = [
 const WhatCanYouDo = () => {
   const { t } = useTranslation()
   const { openModal } = useModalContext()
+  const { setRole } = useRole()
 
   const openSignUpDialog = useCallback(
     (actionType: string) => {
       openModal({ component: <SignUpDialog actionType={actionType} /> })
+      setRole(actionType)
     },
-    [openModal]
+    [openModal, setRole]
   )
 
   const cards = cardData.map((item) => (
