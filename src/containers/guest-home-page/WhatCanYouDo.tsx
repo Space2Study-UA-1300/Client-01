@@ -44,7 +44,6 @@ const WhatCanYouDo = () => {
     },
     [openModal, setRole]
   )
-
   const cards = cardData.map((item) => (
     <InfoCard
       action={() => openSignUpDialog(item.actionType)}
