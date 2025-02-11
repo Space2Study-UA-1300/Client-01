@@ -5,10 +5,7 @@ export const styles = {
     justifyContent: 'center',
     flexDirection: 'column'
   },
-  switch: {
-    display: 'flex',
-    mb: '45px',
-    flexDirection: { sm: 'row', xs: 'column' }
-  },
-  title: { mb: '32px', typography: 'h3' }
+
+  title: { mb: '8px', typography: 'h5' },
+  subtitle: { mb: '32px', typography: 'h7' }
 }

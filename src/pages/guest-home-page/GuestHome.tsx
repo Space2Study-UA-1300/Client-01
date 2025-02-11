@@ -52,8 +52,8 @@ const GuestHomePage = () => {
       <PageWrapper sx={styles.sectionsWrapper}>
         <FeatureBlock items={descriptionTimes} />
         <WhatCanYouDo />
-        <HowItWorks />
         <CategoryList />
+        <HowItWorks />
         <WhoWeAre />
       </PageWrapper>
     </Box>
