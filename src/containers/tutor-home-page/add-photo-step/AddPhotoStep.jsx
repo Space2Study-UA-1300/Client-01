@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
-import { Box, Typography } from '@mui/material'
-import { IconButton } from '@mui/material'
+import { Box, Typography, Alert, Snackbar, IconButton } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import CloseIcon from '@mui/icons-material/Close'
 import { styled } from '@mui/material/styles'
@@ -14,6 +14,9 @@ import appTypography from '~/styles/app-theme/app.typography'
 const AddPhotoStep = ({ btnsBox }) => {
   const [image, setImage] = useState(null)
   const [imageName, setImageName] = useState('')
+  const [error, setError] = useState(null)
+  const [open, setOpen] = useState(false)
+  const [isDragged, setIsDragged] = useState(false)
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -27,18 +30,101 @@ const AddPhotoStep = ({ btnsBox }) => {
     width: 1
   })
 
+  const addPhoto = (file) => {
+    if (!file) return
+
+    const allowedTypes = ['image/jpg', 'image/png', 'image/jpeg']
+    const maxSize = 10 * 1024 * 1024
+
+    setError(null)
+
+    if (!allowedTypes.includes(file.type)) {
+      setError('Please upload an image file(JPEG, PNG, or GIF)')
+      setOpen(true)
+      return
+    }
+
+    if (file.size > maxSize) {
+      setError('File size should be less than 10MB)')
+      setOpen(true)
+      return
+    }
+
+    const fileURL = URL.createObjectURL(file)
+    setImage(fileURL)
+    setImageName(file.name)
+
+    uploadImageToService(file)
+  }
+
+  useEffect(() => {
+    const preventDefaults = (event) => event.preventDefault()
+
+    window.addEventListener('dragover', preventDefaults)
+    window.addEventListener('drop', preventDefaults)
+
+    return () => {
+      window.removeEventListener('dragover', preventDefaults)
+      window.removeEventListener('drop', preventDefaults)
+    }
+  }, [])
+
   const handleFileChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const fileURL = URL.createObjectURL(event.target.files[0])
-      setImage(fileURL)
-      setImageName(event.target.files[0].name)
+    const file = event.target.files[0]
+    if (!file) return
+    addPhoto(file)
+  }
+
+  const handleDrop = (event) => {
+    event.preventDefault()
+    addPhoto(event.dataTransfer.files[0])
+    setIsDragged(false)
+  }
+
+  const handleDragOver = (event) => {
+    event.preventDefault()
+    setIsDragged(true)
+
+    console.log(isDragged)
+  }
+
+  const handleDragLeave = (event) => {
+    event.preventDefault()
+    setIsDragged(false)
+
+    console.log(isDragged)
+  }
+
+  const uploadImageToService = async (file) => {
+    try {
+      const data = new FormData()
+      data.append('image', file)
+
+      const res = await axios.post('http://localhost:8080/upload-image', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      console.log('Upload successful:', res.data)
+    } catch (error) {
+      alert('Upload failed: ' + error.message)
     }
   }
 
   const UploadBox = () => {
     return (
       <Box
-        sx={image ? { ...style.uploadBox, border: 'none' } : style.uploadBox}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        sx={
+          image
+            ? { ...style.uploadBox, border: 'none' }
+            : {
+                ...style.uploadBox,
+                borderColor: isDragged && 'success.900',
+                backgroundColor: isDragged && 'success.50'
+              }
+        }
       >
         {image ? (
           <Box sx={style.imgContainer}>
@@ -74,16 +160,12 @@ const AddPhotoStep = ({ btnsBox }) => {
             sx={style.fileUploader.button}
             variant='outlined'
           >
-            {image ? (
-              ''
-            ) : (
-              <CloudUploadIcon sx={{ mr: 1, color: 'primary.700' }} />
-            )}
-            <Typography>
+            {!image && <CloudUploadIcon sx={{ mr: 1, color: 'primary.700' }} />}
+            <Typography sx={{ textOverflow: 'clip' }}>
               {image ? imageName : `Upload your profile photo`}
             </Typography>
             <VisuallyHiddenInput
-              multiple
+              accept='image/*'
               onChange={handleFileChange}
               type='file'
             />
@@ -105,6 +187,17 @@ const AddPhotoStep = ({ btnsBox }) => {
 
   return (
     <Box sx={style.root}>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={5000}
+        onClose={() => setOpen(false)}
+        open={open}
+      >
+        <Alert onClose={() => setOpen(false)} severity='error'>
+          {error}
+        </Alert>
+      </Snackbar>
+
       <FileUploaderBox />
       <UploadBox />
       <Box sx={{ gridArea: 'empty', visibility: 'hidden' }} />
