@@ -23,11 +23,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   return (
     <Card
       sx={{
-        boxShadow: 'none',
-        '&:hover': {
-          boxShadow: 4,
-          backgroundColor: 'white !important'
-        }
+        boxShadow: 'none'
       }}
     >
       <CardActionArea component={Link} sx={styles.container} to=''>

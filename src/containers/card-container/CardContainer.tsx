@@ -1,31 +1,44 @@
 import * as React from 'react'
 import { Box, useTheme } from '@mui/material'
-import ItemCard from '~/components/item-card/ItemCard'
 import { styles } from '~/containers/card-container/CardContainer.styles'
-const CardContainer = () => {
+import CardWithLink from '~/components/card-with-icon/CardWithIcon'
+
+interface Appearance {
+  color: string
+  icon: string
+}
+
+interface Item {
+  _id: string
+  name: string
+  appearance: Appearance
+  offers: number
+}
+
+interface ResponseData {
+  items: Item[]
+}
+
+interface CardContainerProps {
+  responseData: ResponseData
+}
+
+const CardContainer: React.FC<CardContainerProps> = ({ responseData }) => {
   const theme = useTheme()
 
   return (
     <Box sx={styles(theme).container}>
-      <ItemCard
-        color={'#79B260'}
-        description={'234 student'}
-        icon={'languages'}
-        title={'Language'}
-      />
-      <ItemCard
-        color={'#79B260'}
-        description={'234 student'}
-        icon={'languages'}
-        title={'Language'}
-      />
-      <ItemCard
-        color={'#79B260'}
-        description={'234 student'}
-        icon={'languages'}
-        title={'Language'}
-      />
+      {responseData.items.map((item) => (
+        <CardWithLink
+          color={item.appearance.color}
+          description={`${item.offers} offers`}
+          icon={item.appearance.icon}
+          key={item._id}
+          title={item.name}
+        />
+      ))}
     </Box>
   )
 }
+
 export default CardContainer

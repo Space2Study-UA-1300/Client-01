@@ -21,6 +21,7 @@ import { CategoryInterface, CategoryNameInterface, SizeEnum } from '~/types'
 import { itemsLoadLimit } from '~/constants'
 import { authRoutes } from '~/router/constants/authRoutes'
 import { styles } from '~/pages/categories/Categories.styles'
+// import CategoryList from '~/containers/category-list-container/CategoryList'
 
 const Categories = () => {
   const [match, setMatch] = useState<string>('')
@@ -87,6 +88,7 @@ const Categories = () => {
           }}
         />
       </AppToolbar>
+      {/*<CategoryList responseData={responseData} />*/}
     </PageWrapper>
   )
 }
