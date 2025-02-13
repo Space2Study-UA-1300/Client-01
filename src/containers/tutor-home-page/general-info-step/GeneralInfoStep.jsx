@@ -59,7 +59,7 @@ const GeneralInfoStep = ({ btnsBox }) => {
         />
       </Box>
       <Box component='form' sx={styles.form}>
-        <Typography sx={{ mb: { md: '20px', sm: '16px' } }}>
+        <Typography sx={{ mb: { sm: '16px' } }}>
           {t('becomeTutor.generalInfo.title')}
         </Typography>
 
@@ -147,7 +147,7 @@ const GeneralInfoStep = ({ btnsBox }) => {
         <Box sx={styles.countSymbol}>
           <span>{`${message.length}/${maxLength}`}</span>
         </Box>
-        <Typography sx={{ mb: { md: '20px', sm: '16px' } }}>
+        <Typography sx={{ mb: { sm: '16px' } }}>
           {t('becomeTutor.generalInfo.helperText')}
         </Typography>
         {btnsBox}

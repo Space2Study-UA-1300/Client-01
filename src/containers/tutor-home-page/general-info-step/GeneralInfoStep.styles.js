@@ -1,10 +1,14 @@
+import { fadeAnimation } from '~/styles/app-theme/custom-animations'
+
 export const styles = {
   container: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    backgroundColor: '#f7f7f7'
+    paddingBottom: { xs: '30px', sm: '0px' },
+    height: { sm: '470px' },
+    ...fadeAnimation
   },
   imageContainer: {
     flex: 1,
@@ -14,9 +18,9 @@ export const styles = {
     justifyContent: 'center'
   },
   img: {
-    width: '80%',
     height: 'auto',
-    objectFit: 'cover'
+    objectFit: 'cover',
+    marginRight: '25px'
   },
   form: {
     flex: 1,
