@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect, useCallback } from 'react'
 
 import { Box, Typography, Alert, Snackbar, IconButton } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
@@ -53,8 +52,6 @@ const AddPhotoStep = ({ btnsBox }) => {
     const fileURL = URL.createObjectURL(file)
     setImage(fileURL)
     setImageName(file.name)
-
-    uploadImageToService(file)
   }
 
   useEffect(() => {
@@ -81,34 +78,30 @@ const AddPhotoStep = ({ btnsBox }) => {
     setIsDragged(false)
   }
 
-  const handleDragOver = (event) => {
-    event.preventDefault()
-    setIsDragged(true)
+  const handleDragOver = useCallback(
+    (event) => {
+      event.preventDefault()
+      if (!isDragged) {
+        setIsDragged(true)
+      }
 
-    console.log(isDragged)
-  }
+      console.log('This is dragOver:' + isDragged)
+    },
+    [isDragged]
+  )
 
   const handleDragLeave = (event) => {
     event.preventDefault()
-    setIsDragged(false)
-
-    console.log(isDragged)
-  }
-
-  const uploadImageToService = async (file) => {
-    try {
-      const data = new FormData()
-      data.append('image', file)
-
-      const res = await axios.post('http://localhost:8080/upload-image', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-
-      console.log('Upload successful:', res.data)
-    } catch (error) {
-      alert('Upload failed: ' + error.message)
+    if (isDragged) {
+      setIsDragged(false)
     }
+
+    console.log('This is dragLeave:' + isDragged)
   }
+
+  useEffect(() => {
+    console.log('Final value:' + isDragged)
+  }, [isDragged])
 
   const UploadBox = () => {
     return (
