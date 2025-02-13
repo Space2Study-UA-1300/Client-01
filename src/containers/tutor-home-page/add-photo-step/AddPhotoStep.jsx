@@ -44,7 +44,7 @@ const AddPhotoStep = ({ btnsBox }) => {
     }
 
     if (file.size > maxSize) {
-      setError('File size should be less than 10MB)')
+      setError('File size should be less than 10MB')
       setOpen(true)
       return
     }
