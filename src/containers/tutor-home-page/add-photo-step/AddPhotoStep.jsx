@@ -158,7 +158,7 @@ const AddPhotoStep = ({ btnsBox }) => {
               {image ? imageName : `Upload your profile photo`}
             </Typography>
             <VisuallyHiddenInput
-              accept='image/*'
+              accept='image/png, image/jpg, image/jpeg'
               onChange={handleFileChange}
               type='file'
             />
