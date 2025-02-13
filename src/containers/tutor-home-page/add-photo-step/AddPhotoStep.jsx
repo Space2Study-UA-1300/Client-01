@@ -12,7 +12,6 @@ import appTypography from '~/styles/app-theme/app.typography'
 import {
   deleteImageFromCloudinary,
   uploadImageToCloudinary
-  //deleteImageFromCloudinary
 } from '~/services/cloudinary-service'
 
 const AddPhotoStep = ({ btnsBox }) => {
@@ -89,14 +88,12 @@ const AddPhotoStep = ({ btnsBox }) => {
   const handleDragOver = (event) => {
     event.preventDefault()
     setIsDragged(true)
-
     console.log(isDragged)
   }
 
   const handleDragLeave = (event) => {
     event.preventDefault()
     setIsDragged(false)
-
     console.log(isDragged)
   }
 
@@ -105,12 +102,10 @@ const AddPhotoStep = ({ btnsBox }) => {
       const data = new FormData()
       data.append('image', file)
       const res = await uploadImageToCloudinary(data)
-      console.log('Upload successful:', res.data)
       const { public_id } = res.data
-      console.log(public_id)
       setPublicId(public_id)
     } catch (error) {
-      alert('Upload failed: ' + error.message)
+      setError('Error server! Please try again later')
     }
   }
   const handleImageRemoval = async () => {
