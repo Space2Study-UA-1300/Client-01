@@ -4,10 +4,12 @@ import { defaultResponses } from '~/constants'
 import useAxios from '~/hooks/use-axios'
 import { categoryService } from '~/services/category-service'
 import { CategoryNameInterface, ErrorResponse } from '~/types'
+
 interface UseCategoriesNamesProps<T> {
   fetchOnMount?: boolean
   transform?: (data: CategoryNameInterface[]) => T[]
 }
+
 interface UseCategoriesNamesResult<T> {
   loading: boolean
   response: T[]

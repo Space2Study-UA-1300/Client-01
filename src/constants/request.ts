@@ -44,5 +44,8 @@ export const URLs = {
       post: '/resources-categories',
       delete: 'resources-categories'
     }
+  },
+  media: {
+    uploadImage: '/upload-image'
   }
 }
