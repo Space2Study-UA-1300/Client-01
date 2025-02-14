@@ -109,8 +109,6 @@ const AddPhotoStep = ({ btnsBox }) => {
       if (!isDragged) {
         setIsDragged(true)
       }
-
-      console.log('This is dragOver:' + isDragged)
     },
     [isDragged]
   )
@@ -120,8 +118,6 @@ const AddPhotoStep = ({ btnsBox }) => {
     if (isDragged) {
       setIsDragged(false)
     }
-
-    console.log('This is dragLeave:' + isDragged)
   }
 
   const UploadBox = () => {
