@@ -20,7 +20,9 @@ const GuestIcons: FC<GuestIconsProps> = ({ setSidebarOpen }) => {
   const { openModal } = useModalContext()
 
   const openLoginDialog = useCallback(() => {
-    openModal({ component: <LoginDialog /> })
+    openModal({
+      component: <LoginDialog closeOnClickOutside closeOnIconClick />
+    })
   }, [openModal])
 
   const icons = guestIcons.map(

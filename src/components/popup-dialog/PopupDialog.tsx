@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { isValidElement, FC } from 'react'
 import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
 import IconButton from '@mui/material/IconButton'
@@ -19,6 +19,11 @@ interface PopupDialogProps {
   keyForm: string
 }
 
+interface PopupContentProps {
+  closeOnClickOutside?: boolean
+  closeOnIconClick?: boolean
+}
+
 const PopupDialog: FC<PopupDialogProps> = ({
   content,
   paperProps,
@@ -27,19 +32,34 @@ const PopupDialog: FC<PopupDialogProps> = ({
   keyForm
 }) => {
   const { isDirty } = useFormContext(keyForm)
-
   const [open, setOpen] = useState(false)
   const { isMobile } = useBreakpoints()
   const { closeModal } = useModalContext()
 
+  const closeOnClickOutside = isValidElement(content)
+    ? (content.props as PopupContentProps).closeOnClickOutside ?? false
+    : false
+
+  const closeOnIconClick = isValidElement(content)
+    ? (content.props as PopupContentProps).closeOnIconClick ?? false
+    : false
+
   const handleMouseOver = () => timerId && clearTimeout(timerId)
   const handleMouseLeave = () => timerId && closeModalAfterDelay()
-  const handleClickOut = () => (isDirty ? setOpen(true) : closeModal())
-  const handleClickCloseConfirmationPopUp = () => setOpen(false)
+
+  const closeConfirmationPopUp = () => setOpen(false)
+  const openConfirmationPopUp = () => setOpen(true)
+
+  const handleClickOut = () =>
+    closeOnClickOutside && (isDirty ? openConfirmationPopUp() : closeModal())
+
   const handleClickCloseAll = () => {
-    setOpen(false)
+    closeConfirmationPopUp()
     closeModal()
   }
+
+  const handlerCloseIcon = () =>
+    closeOnIconClick ? closeModal() : openConfirmationPopUp()
 
   return (
     <Dialog
@@ -57,12 +77,12 @@ const PopupDialog: FC<PopupDialogProps> = ({
         onMouseOver={handleMouseOver}
         sx={styles.box}
       >
-        <IconButton onClick={closeModal} sx={styles.icon}>
+        <IconButton onClick={handlerCloseIcon} sx={styles.icon}>
           <CloseIcon />
         </IconButton>
         <Box sx={styles.contentWraper}>{content}</Box>
         <ConfirmationPopUp
-          handleClickNo={handleClickCloseConfirmationPopUp}
+          handleClickNo={closeConfirmationPopUp}
           handleClickYes={handleClickCloseAll}
           open={open}
         />
