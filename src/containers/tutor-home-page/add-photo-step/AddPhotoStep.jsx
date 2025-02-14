@@ -9,6 +9,14 @@ import AppButton from '~/components/app-button/AppButton'
 
 import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
 import appTypography from '~/styles/app-theme/app.typography'
+import {
+  deleteImageFromCloudinary,
+  uploadImageToCloudinary
+} from '~/services/cloudinary-service'
+import {
+  allowedTypes,
+  maxSize
+} from '~/constants/photo-constants/photo-requirements'
 
 const AddPhotoStep = ({ btnsBox }) => {
   const [image, setImage] = useState(null)
@@ -16,6 +24,7 @@ const AddPhotoStep = ({ btnsBox }) => {
   const [error, setError] = useState(null)
   const [open, setOpen] = useState(false)
   const [isDragged, setIsDragged] = useState(false)
+  const [publicId, setPublicId] = useState(null)
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -29,11 +38,25 @@ const AddPhotoStep = ({ btnsBox }) => {
     width: 1
   })
 
+  const uploadImageToService = async (file) => {
+    try {
+      const data = new FormData()
+      data.append('image', file)
+      const res = await uploadImageToCloudinary(data)
+      const { public_id } = res.data
+      setPublicId(public_id)
+    } catch (error) {
+      setError('Error server! Please try again later')
+      setOpen(true)
+    }
+  }
+  const handleImageRemoval = async () => {
+    deleteImageFromCloudinary(publicId)
+    setImage(null)
+  }
+
   const addPhoto = (file) => {
     if (!file) return
-
-    const allowedTypes = ['image/jpg', 'image/png', 'image/jpeg']
-    const maxSize = 10 * 1024 * 1024
 
     setError(null)
 
@@ -52,6 +75,8 @@ const AddPhotoStep = ({ btnsBox }) => {
     const fileURL = URL.createObjectURL(file)
     setImage(fileURL)
     setImageName(file.name)
+
+    uploadImageToService(file)
   }
 
   useEffect(() => {
@@ -98,10 +123,6 @@ const AddPhotoStep = ({ btnsBox }) => {
 
     console.log('This is dragLeave:' + isDragged)
   }
-
-  useEffect(() => {
-    console.log('Final value:' + isDragged)
-  }, [isDragged])
 
   const UploadBox = () => {
     return (
@@ -159,13 +180,14 @@ const AddPhotoStep = ({ btnsBox }) => {
             </Typography>
             <VisuallyHiddenInput
               accept='image/png, image/jpg, image/jpeg'
+              name='image'
               onChange={handleFileChange}
               type='file'
             />
             {!image ? (
               ''
             ) : (
-              <IconButton aria-label='close' onClick={() => setImage(null)}>
+              <IconButton aria-label='close' onClick={handleImageRemoval}>
                 <CloseIcon />
               </IconButton>
             )}
