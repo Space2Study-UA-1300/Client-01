@@ -13,5 +13,12 @@ export const styles = {
       cursor: 'pointer',
       boxShadow: '0 2px 7px rgba(144, 164, 174, 0.56)'
     }
+  },
+  text: {
+    fontSize: '14px',
+    fontWeight: '400',
+    lineHeight: '20px',
+    color: '#455A64',
+    mb: '30px'
   }
 }

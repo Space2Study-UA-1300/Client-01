@@ -3,37 +3,54 @@ import Box from '@mui/material/Box'
 import { styles } from '~/containers/category-list-container/CategoryList.styles'
 import CardContainer from '~/containers/card-container/CardContainer'
 import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Link from '@mui/material/Link'
 
 import { useTranslation } from 'react-i18next'
-
-interface Appearance {
-  color: string
-  icon: string
-}
 
 interface Item {
   _id: string
   name: string
-  appearance: Appearance
   offers: number
-}
-
-interface ResponseData {
-  items: Item[]
-  count: number
+  appearance: {
+    color: string
+    icon: string
+  }
 }
 
 interface CategoryListProps {
-  responseData: ResponseData
+  isExpandable: boolean
+  loadMore: () => void
+  responseData: Item[]
 }
 
-const CategoryList: React.FC<CategoryListProps> = ({ responseData }) => {
+const CategoryList = ({
+  isExpandable,
+  responseData,
+  loadMore
+}: CategoryListProps) => {
   const { t } = useTranslation()
   return (
     <Box>
       <Box sx={styles.container}>
+        <Typography sx={styles.text}>
+          {t('categoriesPage.findRequestText')}{' '}
+          <Link href='/categories' underline='always'>
+            {t('categoriesPage.category')}
+          </Link>{' '}
+          or{' '}
+          <Link href='/categories/subjects' underline='always'>
+            subject!
+          </Link>
+        </Typography>
         <CardContainer responseData={responseData} />
-        <Button size='extraLarge' sx={styles.button} variant='tonal'>
+        <Button
+          disabled={!isExpandable}
+          onClick={loadMore}
+          size='extraLarge'
+          sx={styles.button}
+          variant='tonal'
+        >
           {t('button.ViewMore')}
         </Button>
       </Box>

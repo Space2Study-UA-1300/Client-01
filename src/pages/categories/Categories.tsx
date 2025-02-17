@@ -21,7 +21,7 @@ import { CategoryInterface, CategoryNameInterface, SizeEnum } from '~/types'
 import { itemsLoadLimit } from '~/constants'
 import { authRoutes } from '~/router/constants/authRoutes'
 import { styles } from '~/pages/categories/Categories.styles'
-// import CategoryList from '~/containers/category-list-container/CategoryList'
+import CategoryList from '~/containers/category-list-container/CategoryList'
 
 const Categories = () => {
   const [match, setMatch] = useState<string>('')
@@ -50,10 +50,11 @@ const Categories = () => {
   )
 
   const {
-    // data: categories,
+    data: categories,
     // loading: categoriesLoading,
-    resetData
-    // loadMore,
+    resetData,
+    loadMore,
+    isExpandable
   } = useLoadMore<CategoryInterface, Pick<CategoryInterface, 'name'>>({
     service: getCategories,
     limit: cardsLimit,
@@ -88,7 +89,11 @@ const Categories = () => {
           }}
         />
       </AppToolbar>
-      {/*<CategoryList responseData={responseData} />*/}
+      <CategoryList
+        isExpandable={isExpandable}
+        loadMore={loadMore}
+        responseData={categories}
+      />
     </PageWrapper>
   )
 }
