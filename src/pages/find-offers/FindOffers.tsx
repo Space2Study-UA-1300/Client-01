@@ -2,10 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getOppositeRole } from '~/utils/helper-functions'
-
 import { Box } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-
 import useBreakpoints from '~/hooks/use-breakpoints'
 import useAxios from '~/hooks/use-axios'
 import { categoryService } from '~/services/category-service'
@@ -13,7 +11,6 @@ import { subjectService } from '~/services/subject-service'
 import { offerService } from '~/services/offer-service'
 import { authRoutes } from '~/router/constants/authRoutes'
 import { getScreenBasedLimit } from '~/utils/helper-functions'
-
 import DirectionLink from '~/components/direction-link/DirectionLink'
 import PageWrapper from '~/components/page-wrapper/PageWrapper'
 import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
@@ -32,9 +29,6 @@ import AppContentSwitcher from '~/components/app-content-switcher/AppContentSwit
 import { SwitchOptions } from '~/types'
 
 const FindOffers = () => {
-  const { userRole } = useAppSelector((state) => state.appMain)
-  const oppositeRole: string = getOppositeRole(userRole)
-  const [active, setActive] = useState(false)
   const { t } = useTranslation()
   const breakpoints = useBreakpoints()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -42,8 +36,30 @@ const FindOffers = () => {
   const subjectId = searchParams.get('subject') ?? ''
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const cardsLimit = getScreenBasedLimit(breakpoints, itemsLoadLimit)
+  const { userRole } = useAppSelector((state) => state.appMain)
+  const oppositeRole = getOppositeRole(userRole)
+  const [active, setActive] = useState(false)
+  useEffect(() => {
+    searchParams.set('authorRole', oppositeRole)
+    setSearchParams(searchParams)
+  }, [])
+
+  const roleFromURL = searchParams.get('authorRole') || ''
+
+  const setAuthor = () => {
+    const roleMapping: Record<string, string> = {
+      tutor: 'student',
+      student: 'tutor'
+    }
+    const mappedRole = roleMapping[roleFromURL]
+    if (mappedRole) {
+      searchParams.set('authorRole', mappedRole)
+      setSearchParams(searchParams)
+    }
+  }
   const onChangeSwitch = () => {
     setActive((prev) => !prev)
+    setAuthor()
   }
   const mockSwitchOptionsWithoutTooltip: SwitchOptions = {
     left: {
@@ -170,16 +186,17 @@ const FindOffers = () => {
           updateFilter={onSearchHandler}
         />
       </AppToolbar>
-      <Box sx={{ height: 50, width: 150 }}>
-        <AppContentSwitcher
-          active={active}
-          onChange={onChangeSwitch}
-          switchOptions={mockSwitchOptionsWithoutTooltip}
-          typographyVariant='body1'
-        />
+      <Box sx={styles.filterContainer}>
+        <Box sx={styles.switchRole}>
+          <AppContentSwitcher
+            active={active}
+            onChange={onChangeSwitch}
+            switchOptions={mockSwitchOptionsWithoutTooltip}
+            typographyVariant='body1'
+          />
+        </Box>
+        <OfferViewSwitcher setViewMode={setViewMode} viewMode={viewMode} />
       </Box>
-      <OfferViewSwitcher setViewMode={setViewMode} viewMode={viewMode} />
-
       {loading ? (
         <Loader />
       ) : items.length ? (
