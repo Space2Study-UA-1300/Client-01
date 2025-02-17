@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography, Autocomplete, TextField } from '@mui/material'
 
@@ -6,14 +6,21 @@ import { styles } from '~/containers/tutor-home-page/language-step/LanguageStep.
 import img from '~/assets/img/tutor-home-page/become-tutor/languages.svg'
 
 import { languagesMock } from '../subjects-step/constants'
+import { useStepContext } from '~/context/step-context'
 
 const languages = languagesMock.map((lang) => lang.name)
 
 const LanguageStep = ({ btnsBox }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState(null)
+  const { stepData } = useStepContext()
+
+  const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
   const [displayedLanguages, setDisplayedLanguages] = useState(
     languages.slice(0, 6)
   )
+
+  useEffect(() => {
+    stepData.language = selectedLanguage
+  }, [selectedLanguage, stepData])
 
   const handleScroll = (event) => {
     const listboxNode = event.currentTarget

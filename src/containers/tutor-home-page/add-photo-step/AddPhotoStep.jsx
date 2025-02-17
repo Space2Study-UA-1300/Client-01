@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Box, Typography } from '@mui/material'
 import { IconButton } from '@mui/material'
@@ -10,10 +10,19 @@ import AppButton from '~/components/app-button/AppButton'
 
 import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
 import appTypography from '~/styles/app-theme/app.typography'
+import { useStepContext } from '~/context/step-context'
 
 const AddPhotoStep = ({ btnsBox }) => {
-  const [image, setImage] = useState(null)
+  const { stepData } = useStepContext()
+
+  const [image, setImage] = useState(stepData.photo)
   const [imageName, setImageName] = useState('')
+
+  console.log(imageName, image)
+
+  useEffect(() => {
+    stepData.photo = [image, ...stepData.photo]
+  }, [image, stepData])
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
