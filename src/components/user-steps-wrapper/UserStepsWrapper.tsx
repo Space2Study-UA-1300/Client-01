@@ -18,6 +18,8 @@ import { student } from '~/constants'
 
 interface UserStepsWrapperProps {
   userRole: string
+  closeOnClickOutside: boolean
+  closeOnIconClick: boolean
 }
 
 const UserStepsWrapper: FC<UserStepsWrapperProps> = ({ userRole }) => {
