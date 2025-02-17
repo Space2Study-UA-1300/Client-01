@@ -6,21 +6,23 @@ import Stack from '@mui/material/Stack'
 
 import { styles } from './SubjectForm.styles'
 
-import AppSelect from '~/components/app-select/AppSelect'
 import AppAutoComplete from '~/components/app-auto-complete/AppAutoComplete'
 import AppButton from '~/components/app-button/AppButton'
 import AppChipList from '~/components/app-chips-list/AppChipList'
 
 import { useStepContext } from '~/context/step-context'
-import { subjectsMock } from '~/containers/tutor-home-page/subjects-step/constants.js'
+
+import useCategoriesNames from '~/hooks/use-categories-names'
+import useSubjectsNames from '~/hooks/use-subjects-names'
 
 const SubjectForm = ({ handleSubmit }) => {
   const { stepData } = useStepContext()
   const { t } = useTranslation()
 
   const [inputCategory, setInputCategory] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedSubject, setSelectedSubject] = useState('')
+  const [inputSubject, setInputSubject] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState({})
+  const [selectedSubject, setSelectedSubject] = useState({})
   const [subjectsChipList, setSubjectsChipList] = useState([
     ...stepData.subjects
   ])
@@ -29,84 +31,134 @@ const SubjectForm = ({ handleSubmit }) => {
     stepData.subjects = subjectsChipList
   }, [subjectsChipList, stepData])
 
-  const getCategoryArray = (value = []) => {
-    const newCatArr = []
-    value.map(({ category }) => newCatArr.push(category))
+  const categories = useCategoriesNames({
+    fetchOnMount: true
+  })
 
-    return newCatArr
+  const subjects = useSubjectsNames({
+    category: selectedCategory._id,
+    fetchOnMount: true
+  })
+
+  const onInputChangeCategory = (_, value, reason) => {
+    if (reason === 'clear') {
+      formReset()
+    } else {
+      setInputCategory(value)
+      setSelectedSubject({})
+      setInputSubject('')
+    }
   }
 
-  const getCategorySubjects = subjectsMock.find(
-    ({ category }) =>
-      category.toLowerCase() === selectedCategory.toLocaleLowerCase()
-  )
-
-  const subjectFields = (value = []) =>
-    value.map(({ name }) => {
-      return {
-        title: name,
-        value: name
-      }
-    })
-
-  const onInputChangeCategory = (_, value) => setInputCategory(value)
-
-  const handleAutoCompleteChangeCategory = (_, value) => {
-    value ? setSelectedCategory(value) : setSelectedCategory('')
+  const onInputChangeSubject = (_, value, reason) => {
+    if (reason !== 'reset') {
+      setInputSubject(value)
+    }
   }
 
-  const handleSelectSubject = (event) => {
-    setSelectedSubject(event)
+  const handleSelectCategory = (_, value) => {
+    if (value) {
+      setSelectedCategory(value || {})
+      setInputCategory(value.name || '')
+    }
+  }
+
+  const handleSelectSubject = (_, value) => {
+    if (value) {
+      setSelectedSubject(value || {})
+      setInputSubject(value.name || '')
+    }
   }
 
   const handleDelete = (chipToDelete) => {
     const filteredSubject = subjectsChipList.filter(
-      (chip) => chip !== chipToDelete
+      (chip) => chip.name !== chipToDelete
     )
     setSubjectsChipList(() => filteredSubject)
   }
 
+  const formReset = () => {
+    setSelectedCategory({})
+    setSelectedSubject({})
+    setInputCategory('')
+    setInputSubject('')
+  }
+
   const addCategory = () => {
-    if (selectedSubject) {
-      if (!subjectsChipList.includes(selectedSubject)) {
+    console.log(subjectsChipList)
+    if (selectedSubject.name && selectedCategory.name) {
+      if (!subjectsChipList.includes(selectedSubject.name)) {
         setSubjectsChipList(() => [...subjectsChipList, selectedSubject])
       }
-      setSelectedCategory('')
-      setSelectedSubject('')
+      formReset()
     }
+  }
+
+  const renderOptions = (props, { name }) => {
+    const { ...optionProps } = props
+    return (
+      <Box component='li' sx={{ height: '48px' }} {...optionProps}>
+        {name}
+      </Box>
+    )
   }
 
   return (
     <Box component='form' onSubmit={handleSubmit} sx={styles.form}>
       <AppAutoComplete
+        disableClearable={false}
+        filterOptions={(options) =>
+          options.filter((option) =>
+            option.name.toLowerCase().includes(inputCategory.toLowerCase())
+          )
+        }
+        freeSolo
+        getOptionLabel={(option) => option?.name ?? ''}
         inputValue={inputCategory}
-        isOptionEqualToValue={(option, value) => option === value}
-        onChange={handleAutoCompleteChangeCategory}
+        isOptionEqualToValue={(option, value) =>
+          option?.name === value?.label || value === null
+        }
+        onChange={handleSelectCategory}
         onInputChange={onInputChangeCategory}
-        options={getCategoryArray(subjectsMock)}
+        options={categories.response}
         sx={{ mb: '20px' }}
         textFieldProps={{
           label: t('becomeTutor.categories.mainSubjectsLabel')
         }}
-        value={selectedCategory || null}
+        value={inputCategory ? { name: inputCategory } : null}
       />
-      <AppSelect
-        fields={subjectFields(
-          selectedCategory ? getCategorySubjects.subjects : []
-        )}
-        label={t('becomeTutor.categories.subjectLabel')}
-        setValue={handleSelectSubject}
+      <AppAutoComplete
+        disableClearable={false}
+        filterOptions={(options) =>
+          options.filter((option) =>
+            option.name.toLowerCase().includes(inputSubject.toLowerCase())
+          )
+        }
+        freeSolo
+        getOptionLabel={(option) => option?.name ?? ''}
+        inputValue={inputSubject}
+        isOptionEqualToValue={(option, value) =>
+          option?.name === value || value === null
+        }
+        onChange={handleSelectSubject}
+        onInputChange={onInputChangeSubject}
+        options={subjects.response}
+        renderOption={(props, option) => renderOptions(props, option)}
         sx={{ mb: '16px' }}
-        value={selectedSubject}
+        textFieldProps={{
+          label: t('becomeTutor.categories.subjectLabel')
+        }}
+        value={inputSubject}
       />
+
       <AppButton onClick={addCategory} sx={styles.button}>
         {t('becomeTutor.categories.btnText')}
       </AppButton>
       <Stack direction='row' spacing={'4px'} sx={{ mt: 2, flexWrap: 'wrap' }}>
         <AppChipList
-          defaultQuantity={3}
+          defaultQuantity={2}
           handleChipDelete={handleDelete}
-          items={subjectsChipList}
+          items={subjectsChipList.map(({ name }) => name)}
         />
       </Stack>
     </Box>

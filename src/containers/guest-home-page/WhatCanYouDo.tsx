@@ -39,12 +39,19 @@ const WhatCanYouDo = () => {
 
   const openSignUpDialog = useCallback(
     (actionType: string) => {
-      openModal({ component: <SignUpDialog actionType={actionType} /> })
+      openModal({
+        component: (
+          <SignUpDialog
+            actionType={actionType}
+            closeOnClickOutside
+            closeOnIconClick
+          />
+        )
+      })
       setRole(actionType)
     },
     [openModal, setRole]
   )
-
   const cards = cardData.map((item) => (
     <InfoCard
       action={() => openSignUpDialog(item.actionType)}
