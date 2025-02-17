@@ -27,6 +27,9 @@ export const URLs = {
     get: '/subjects',
     getNames: '/subjects/names'
   },
+  offers: {
+    get: '/offers'
+  },
   resources: {
     questions: {
       get: '/questions',
@@ -41,5 +44,8 @@ export const URLs = {
       post: '/resources-categories',
       delete: 'resources-categories'
     }
+  },
+  media: {
+    uploadImage: '/upload-image'
   }
 }

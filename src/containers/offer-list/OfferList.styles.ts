@@ -1,0 +1,15 @@
+export const styles = {
+  container: {
+    columnGap: '24px',
+    rowGap: '24px'
+  },
+  'container--list': {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  'container--grid': {
+    display: 'grid',
+    alignSelf: 'center',
+    gridTemplateColumns: 'repeat(3, minmax(360px, 1fr))'
+  }
+}

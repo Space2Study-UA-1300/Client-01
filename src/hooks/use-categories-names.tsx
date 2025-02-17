@@ -9,6 +9,7 @@ interface UseCategoriesNamesProps<T> {
   fetchOnMount?: boolean
   transform?: (data: CategoryNameInterface[]) => T[]
 }
+
 interface UseCategoriesNamesResult<T> {
   loading: boolean
   response: T[]

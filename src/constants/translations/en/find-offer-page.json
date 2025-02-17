@@ -47,6 +47,8 @@
   "notFound":{
     "description": "We couldn’t find what you were searching for."
   },
+  "currency": "UAH",
+  "hour": "HOUR",
   "otherOffers":{
     "title":"Other offers"
   }
