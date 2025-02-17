@@ -11,6 +11,10 @@
     "title": "Explore Offers",
     "description": "Discover offers in your area of interest"
   },
+  "switchOption": {
+    "tutor": "Tutor's offers",
+    "student": "Students' requests"
+  },
   "backToAllSubjects": "Back to all subjects",
   "searchToolbar": {
     "label": "Search by tutor name"
