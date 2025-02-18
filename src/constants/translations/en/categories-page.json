@@ -13,5 +13,8 @@
     "category": "Add subject to existing category or create a new one.",
     "info": "Provide a brief explanation of why you believe this subject or category should be added.",
     "labels": { "subject": "New subject" }
-  }
+  },
+  "findRequestText": "Can't find what you're looking for? Request a new",
+  "category": "category",
+  "subject": "subject!"
 }

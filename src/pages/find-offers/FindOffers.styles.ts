@@ -50,5 +50,14 @@ export const styles = {
     justifyContent: 'center',
     border: '1px solid #000',
     borderRadius: '2px'
+  },
+  filterContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  switchRole: {
+    height: 50,
+    width: 150
   }
 }
