@@ -27,6 +27,17 @@ import { snackbarVariants } from '~/constants'
 import { categoryService } from '~/services/category-service'
 import { validations } from '~/containers/find-offer/create-new-subject/CreateNewSubject.constants'
 import { styles } from '~/containers/find-offer/create-new-subject/CreateNewSubject.styles'
+import { subjectService } from '~/services/subject-service'
+
+interface CategoryInterface {
+  _id: string
+  name: string
+}
+
+type FormData = {
+  subject: string
+  category: string
+}
 
 const CreateSubjectModal = () => {
   const { closeModal } = useModalContext()
@@ -49,7 +60,55 @@ const CreateSubjectModal = () => {
     closeModal()
   }
 
-  const sendSubjectRequest = (): Promise<AxiosResponse> => null
+  function capitalizeFirstLetter(text: string): string {
+    if (!text) return ''
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+  }
+
+  const sendSubjectRequest = async (): Promise<AxiosResponse> => {
+    try {
+      const dataCapitalizedCategory = capitalizeFirstLetter(data.category)
+      const dataCapitalizedSubject = capitalizeFirstLetter(data.subject)
+
+      const categoriesResponse = await categoryService.getCategories({
+        name: dataCapitalizedCategory
+      })
+      const category = categoriesResponse.data.items.find(
+        (item: CategoryInterface) => item.name === data.category
+      )
+
+      if (!category?.name) {
+        const newCategory = await categoryService.createCategories(
+          dataCapitalizedCategory
+        )
+
+        const newCategoryId = newCategory.data._id
+        const newCategoryName = newCategory.data.name
+
+        return await subjectService.createSubject(
+          newCategoryId,
+          newCategoryName,
+          dataCapitalizedSubject
+        )
+      }
+
+      if (!category) {
+        throw new Error('Category not found')
+      }
+
+      const categoryId = category._id
+      const categoryName = category.name
+
+      return await subjectService.createSubject(
+        categoryId,
+        categoryName,
+        dataCapitalizedSubject
+      )
+    } catch (error) {
+      console.error('Error:', error)
+      throw error
+    }
+  }
 
   const { loading, fetchData } = useAxios({
     service: sendSubjectRequest,
@@ -58,6 +117,10 @@ const CreateSubjectModal = () => {
     onResponse: handleResponse,
     onResponseError: handleResponseError
   })
+
+  const handleFormSubmit = async (formData?: FormData) => {
+    await fetchData()
+  }
 
   const {
     data,
@@ -73,7 +136,7 @@ const CreateSubjectModal = () => {
       category: '',
       info: ''
     },
-    onSubmit: fetchData,
+    onSubmit: handleFormSubmit,
     validations
   })
 

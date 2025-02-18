@@ -13,10 +13,23 @@ export const subjectService = {
     const category = createUrlPath(URLs.categories.get, categoryId)
     return axiosClient.get(`${category}${URLs.subjects.get}`, { params })
   },
+
   getSubjectsNames: (
     categoryId: string | null
   ): Promise<AxiosResponse<SubjectNameInterface[]>> => {
     const category = createUrlPath(URLs.categories.get, categoryId)
     return axiosClient.get(`${category}${URLs.subjects.getNames}`)
+  },
+
+  createSubject: (
+    category: string,
+    categoryName: string,
+    name: string
+  ): Promise<AxiosResponse<SubjectInterface>> => {
+    return axiosClient.post(URLs.subjects.createSubject, {
+      name,
+      category,
+      categoryName
+    })
   }
 }
