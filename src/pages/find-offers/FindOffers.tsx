@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-
+import { getOppositeRole } from '~/utils/helper-functions'
 import { Box } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-
 import useBreakpoints from '~/hooks/use-breakpoints'
 import useAxios from '~/hooks/use-axios'
 import { categoryService } from '~/services/category-service'
@@ -12,7 +11,6 @@ import { subjectService } from '~/services/subject-service'
 import { offerService } from '~/services/offer-service'
 import { authRoutes } from '~/router/constants/authRoutes'
 import { getScreenBasedLimit } from '~/utils/helper-functions'
-
 import DirectionLink from '~/components/direction-link/DirectionLink'
 import PageWrapper from '~/components/page-wrapper/PageWrapper'
 import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
@@ -23,10 +21,12 @@ import NotFoundResults from '~/components/not-found-results/NotFoundResults'
 import Loader from '~/components/loader/Loader'
 import OfferViewSwitcher from '~/components/offer-view-switcher/OfferViewSwitcher'
 import OfferList from '~/containers/offer-list/OfferList'
-
+import { useAppSelector } from '~/hooks/use-redux'
 import { itemsLoadLimit } from '~/constants'
 import { styles } from '~/pages/find-offers/FindOffers.styles'
 import { CategoryNameInterface, SizeEnum } from '~/types'
+import AppContentSwitcher from '~/components/app-content-switcher/AppContentSwitcher'
+import { SwitchOptions } from '~/types'
 
 const FindOffers = () => {
   const { t } = useTranslation()
@@ -36,7 +36,39 @@ const FindOffers = () => {
   const subjectId = searchParams.get('subject') ?? ''
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const cardsLimit = getScreenBasedLimit(breakpoints, itemsLoadLimit)
+  const { userRole } = useAppSelector((state) => state.appMain)
+  const oppositeRole = getOppositeRole(userRole)
+  const [active, setActive] = useState(false)
+  useEffect(() => {
+    searchParams.set('authorRole', oppositeRole)
+    setSearchParams(searchParams)
+  }, [])
 
+  const roleFromURL = searchParams.get('authorRole') || ''
+
+  const setAuthor = () => {
+    const roleMapping: Record<string, string> = {
+      tutor: 'student',
+      student: 'tutor'
+    }
+    const mappedRole = roleMapping[roleFromURL]
+    if (mappedRole) {
+      searchParams.set('authorRole', mappedRole)
+      setSearchParams(searchParams)
+    }
+  }
+  const onChangeSwitch = () => {
+    setActive((prev) => !prev)
+    setAuthor()
+  }
+  const mockSwitchOptionsWithoutTooltip: SwitchOptions = {
+    left: {
+      text: t(`findOffers.switchOption.${oppositeRole}`)
+    },
+    right: {
+      text: t(`findOffers.switchOption.${userRole}`)
+    }
+  }
   const params = useMemo(
     () => ({ ...Object.fromEntries(searchParams.entries()) }),
     [searchParams]
@@ -154,8 +186,17 @@ const FindOffers = () => {
           updateFilter={onSearchHandler}
         />
       </AppToolbar>
-      <OfferViewSwitcher setViewMode={setViewMode} viewMode={viewMode} />
-
+      <Box sx={styles.filterContainer}>
+        <Box sx={styles.switchRole}>
+          <AppContentSwitcher
+            active={active}
+            onChange={onChangeSwitch}
+            switchOptions={mockSwitchOptionsWithoutTooltip}
+            typographyVariant='body1'
+          />
+        </Box>
+        <OfferViewSwitcher setViewMode={setViewMode} viewMode={viewMode} />
+      </Box>
       {loading ? (
         <Loader />
       ) : items.length ? (
