@@ -7,12 +7,9 @@ import { styled } from '@mui/material/styles'
 
 import AppButton from '~/components/app-button/AppButton'
 
-import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
 import appTypography from '~/styles/app-theme/app.typography'
-import {
-  deleteImageFromCloudinary,
-  uploadImageToCloudinary
-} from '~/services/cloudinary-service'
+import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
+
 import {
   allowedTypes,
   maxSize
@@ -20,20 +17,17 @@ import {
 import { useStepContext } from '~/context/step-context'
 
 const AddPhotoStep = ({ btnsBox }) => {
-  const { stepData } = useStepContext()
+  const { stepData, handleStepData } = useStepContext()
 
-  const [image, setImage] = useState(stepData.photo)
-  const [imageName, setImageName] = useState('')
+  const [image, setImage] = useState(null)
+  const [photoFile, setPhotoFile] = useState(stepData.photo)
   const [error, setError] = useState(null)
   const [open, setOpen] = useState(false)
   const [isDragged, setIsDragged] = useState(false)
-  const [publicId, setPublicId] = useState(null)
-
-  console.log(imageName, image)
 
   useEffect(() => {
-    stepData.photo = [image, ...stepData.photo]
-  }, [image, stepData])
+    photoFile && addPhoto(photoFile)
+  }, [photoFile])
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -46,23 +40,6 @@ const AddPhotoStep = ({ btnsBox }) => {
     whiteSpace: 'nowrap',
     width: 1
   })
-
-  const uploadImageToService = async (file) => {
-    try {
-      const data = new FormData()
-      data.append('image', file)
-      const res = await uploadImageToCloudinary(data)
-      const { public_id } = res.data
-      setPublicId(public_id)
-    } catch (error) {
-      setError('Error server! Please try again later')
-      setOpen(true)
-    }
-  }
-  const handleImageRemoval = async () => {
-    deleteImageFromCloudinary(publicId)
-    setImage(null)
-  }
 
   const addPhoto = (file) => {
     if (!file) return
@@ -83,9 +60,8 @@ const AddPhotoStep = ({ btnsBox }) => {
 
     const fileURL = URL.createObjectURL(file)
     setImage(fileURL)
-    setImageName(file.name)
-
-    uploadImageToService(file)
+    setPhotoFile(file)
+    handleStepData('photo', file)
   }
 
   useEffect(() => {
@@ -181,7 +157,7 @@ const AddPhotoStep = ({ btnsBox }) => {
           >
             {!image && <CloudUploadIcon sx={{ mr: 1, color: 'primary.700' }} />}
             <Typography sx={{ textOverflow: 'clip' }}>
-              {image ? imageName : `Upload your profile photo`}
+              {image ? photoFile.name : `Upload your profile photo`}
             </Typography>
             <VisuallyHiddenInput
               accept='image/png, image/jpg, image/jpeg'
@@ -192,7 +168,7 @@ const AddPhotoStep = ({ btnsBox }) => {
             {!image ? (
               ''
             ) : (
-              <IconButton aria-label='close' onClick={handleImageRemoval}>
+              <IconButton aria-label='close' onClick={() => setImage(null)}>
                 <CloseIcon />
               </IconButton>
             )}

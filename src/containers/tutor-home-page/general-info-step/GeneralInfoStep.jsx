@@ -23,8 +23,10 @@ import { useStepContext } from '~/context/step-context'
 
 const GeneralInfoStep = ({ btnsBox }) => {
   const { t } = useTranslation()
-  const { stepData } = useStepContext()
+  const { userId, userRole } = useAppSelector((state) => state.appMain)
+  const { stepData, handleStepData } = useStepContext()
   const { country, city, professionalSummary } = stepData.generalInfo.data
+
   const [message, setMessage] = useState(professionalSummary)
   const [selectedCountry, setSelectedCountry] = useState(country)
   const [selectedCity, setSelectedCity] = useState(city)
@@ -32,18 +34,28 @@ const GeneralInfoStep = ({ btnsBox }) => {
 
   const maxLength = 100
 
-  const { userId, userRole } = useAppSelector((state) => state.appMain)
-
   const getUserData = useCallback(
     () => userService.getUserById(userId, userRole),
     [userId, userRole]
   )
+
+  // console.log(getUserData)
 
   const { response } = useAxios({
     service: getUserData,
     fetchOnMount: true,
     defaultResponse: defaultResponses.array
   })
+
+  useEffect(() => {
+    handleStepData('generalInfo', {
+      country: selectedCountry,
+      city: selectedCity,
+      professionalSummary: message,
+      firstName: response.firstName,
+      lastName: response.lastName
+    })
+  }, [message, selectedCity, selectedCountry])
 
   const { handleBlur, errors } = useForm({
     initialValues: {
@@ -52,18 +64,6 @@ const GeneralInfoStep = ({ btnsBox }) => {
     },
     validations: { firstName, lastName }
   })
-
-  useEffect(() => {
-    stepData.generalInfo = {
-      data: {
-        professionalSummary: message,
-        country: selectedCountry,
-        firstName: response.firstName,
-        lastName: response.lastName,
-        city: selectedCity
-      }
-    }
-  }, [message, response, selectedCountry, stepData, selectedCity])
 
   const handleMessageChange = (event) => {
     const newMessage = event.target.value
@@ -85,7 +85,9 @@ const GeneralInfoStep = ({ btnsBox }) => {
     setCities(COUNTRIES_AND_CITIES[country] || [])
   }
 
-  const handleCityChange = (event) => setSelectedCity(event.target.value)
+  const handleCityChange = (event) => {
+    setSelectedCity(event.target.value)
+  }
 
   useEffect(() => {
     if (selectedCountry) {

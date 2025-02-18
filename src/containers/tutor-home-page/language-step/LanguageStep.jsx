@@ -11,7 +11,7 @@ import { useStepContext } from '~/context/step-context'
 const languages = languagesMock.map((lang) => lang.name)
 
 const LanguageStep = ({ btnsBox }) => {
-  const { stepData } = useStepContext()
+  const { stepData, handleStepData } = useStepContext()
 
   const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
   const [displayedLanguages, setDisplayedLanguages] = useState(
@@ -19,8 +19,8 @@ const LanguageStep = ({ btnsBox }) => {
   )
 
   useEffect(() => {
-    stepData.language = selectedLanguage
-  }, [selectedLanguage, stepData])
+    handleStepData('language', selectedLanguage)
+  }, [selectedLanguage])
 
   const handleScroll = (event) => {
     const listboxNode = event.currentTarget
