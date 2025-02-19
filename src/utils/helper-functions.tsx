@@ -150,7 +150,7 @@ export const spliceSx = (
 export const studentOrTutor = (userRole: '' | UserRole) =>
   userRole === UserRoleEnum.Tutor ? UserRoleEnum.Tutor : UserRoleEnum.Student
 
-export const getOpositeRole = (role: UserRole | '') =>
+export const getOppositeRole = (role: UserRole | '') =>
   role === UserRoleEnum.Tutor ? UserRoleEnum.Student : UserRoleEnum.Tutor
 
 const createQueryParamsString = (query: { [key: string]: string }) => {

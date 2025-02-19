@@ -1,14 +1,4 @@
 export const styles = {
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '24px',
-    padding: '24px 32px',
-    '&:hover': {
-      cursor: 'pointer',
-      boxShadow: '0px 3px 16px 2px rgba(144, 164, 174, 0.56)'
-    }
-  },
   img: {
     width: '100%',
     alignSelf: 'center',

@@ -4,7 +4,8 @@ export const styles = {
     justifyContent: 'flex-end'
   },
   searchToolbar: {
-    borderRadius: '70px'
+    borderRadius: '70px',
+    mb: { xs: '20px', sm: '30px' }
   },
   titleWithDescription: {
     wrapper: {

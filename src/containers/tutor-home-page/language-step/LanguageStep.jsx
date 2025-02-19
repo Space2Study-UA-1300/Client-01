@@ -4,13 +4,15 @@ import Box from '@mui/material/Box'
 import { Typography, Autocomplete, TextField } from '@mui/material'
 import { styles } from '~/containers/tutor-home-page/language-step/LanguageStep.styles'
 import img from '~/assets/img/tutor-home-page/become-tutor/languages.svg'
+import { useStepContext } from '~/context/step-context'
 
 const LanguageStep = ({ btnsBox }) => {
   const [displayedLanguages, setDisplayedLanguages] = useState([])
-  const [selectedLanguage, setSelectedLanguage] = useState(null)
+  const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [search, setSearch] = useState('')
+  const { stepData, handleStepData } = useStepContext()
 
   const fetchLanguages = async (newSearch = search, reset = false) => {
     if (!hasMore && !reset) return
@@ -35,6 +37,10 @@ const LanguageStep = ({ btnsBox }) => {
   useEffect(() => {
     fetchLanguages('', true)
   }, [])
+
+  useEffect(() => {
+    handleStepData('language', selectedLanguage)
+  }, [selectedLanguage])
 
   const handleScroll = (event) => {
     const listboxNode = event.currentTarget
@@ -82,5 +88,4 @@ const LanguageStep = ({ btnsBox }) => {
     </Box>
   )
 }
-
 export default LanguageStep
