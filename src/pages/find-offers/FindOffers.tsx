@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { getOppositeRole } from '~/utils/helper-functions'
 import { Box } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import useBreakpoints from '~/hooks/use-breakpoints'
@@ -19,60 +18,38 @@ import AsyncAutocomplete from '~/components/async-autocomlete/AsyncAutocomplete'
 import SearchFilterInput from '~/components/search-filter-input/SearchFilterInput'
 import NotFoundResults from '~/components/not-found-results/NotFoundResults'
 import Loader from '~/components/loader/Loader'
-import OfferViewSwitcher from '~/components/offer-view-switcher/OfferViewSwitcher'
 import OfferList from '~/containers/offer-list/OfferList'
-import { useAppSelector } from '~/hooks/use-redux'
 import { itemsLoadLimit } from '~/constants'
 import { styles } from '~/pages/find-offers/FindOffers.styles'
 import { CategoryNameInterface, SizeEnum } from '~/types'
-import AppContentSwitcher from '~/components/app-content-switcher/AppContentSwitcher'
-import { SwitchOptions } from '~/types'
+import OfferFilterMenu from '~/components/offer-filter-menu/OfferFilterMenu'
+import OfferToolbar from '~/components/offer-toolbar/OfferToolbar'
+import AppPagination from '~/components/app-pagination/AppPagination'
+import usePagination from '~/hooks/table/use-pagination'
 
 const FindOffers = () => {
   const { t } = useTranslation()
   const breakpoints = useBreakpoints()
+  const itemsPerPage = getScreenBasedLimit(breakpoints, itemsLoadLimit)
   const [searchParams, setSearchParams] = useSearchParams()
   const categoryId = searchParams.get('category') ?? ''
   const subjectId = searchParams.get('subject') ?? ''
+  const limit = Number(searchParams.get('limit')) || itemsPerPage
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const cardsLimit = getScreenBasedLimit(breakpoints, itemsLoadLimit)
-  const { userRole } = useAppSelector((state) => state.appMain)
-  const oppositeRole = getOppositeRole(userRole)
-  const [active, setActive] = useState(false)
-  useEffect(() => {
-    searchParams.set('authorRole', oppositeRole)
-    setSearchParams(searchParams)
-  }, [])
 
-  const roleFromURL = searchParams.get('authorRole') || ''
+  const [isFilterShown, setIsFilterShown] = useState(false)
+  const { page, handleChangePage, clearPage } = usePagination({
+    itemsPerPage: limit
+  })
 
-  const setAuthor = () => {
-    const roleMapping: Record<string, string> = {
-      tutor: 'student',
-      student: 'tutor'
-    }
-    const mappedRole = roleMapping[roleFromURL]
-    if (mappedRole) {
-      searchParams.set('authorRole', mappedRole)
-      setSearchParams(searchParams)
-    }
-  }
-  const onChangeSwitch = () => {
-    setActive((prev) => !prev)
-    setAuthor()
-  }
-  const mockSwitchOptionsWithoutTooltip: SwitchOptions = {
-    left: {
-      text: t(`findOffers.switchOption.${oppositeRole}`)
-    },
-    right: {
-      text: t(`findOffers.switchOption.${userRole}`)
-    }
-  }
   const params = useMemo(
     () => ({ ...Object.fromEntries(searchParams.entries()) }),
     [searchParams]
   )
+
+  const resetPagination = () => {
+    searchParams.delete('skip')
+  }
 
   const onCategoryChange = (
     _: React.SyntheticEvent,
@@ -84,6 +61,9 @@ const FindOffers = () => {
     } else {
       searchParams.set('category', value._id)
     }
+
+    resetPagination()
+    clearPage()
 
     setSearchParams(searchParams)
   }
@@ -97,6 +77,9 @@ const FindOffers = () => {
     } else {
       searchParams.set('subject', value._id)
     }
+
+    resetPagination()
+    clearPage()
 
     setSearchParams(searchParams)
   }
@@ -143,11 +126,14 @@ const FindOffers = () => {
       searchParams.set('search', data)
     }
 
+    resetPagination()
+    clearPage()
+
     setSearchParams(searchParams)
   }
 
   const {
-    response: { items },
+    response: { items, count },
     loading,
     fetchData
   } = useAxios({
@@ -157,8 +143,21 @@ const FindOffers = () => {
   })
 
   useEffect(() => {
-    void fetchData({ ...params, limit: cardsLimit })
-  }, [params, fetchData, cardsLimit])
+    void fetchData({
+      limit: itemsPerPage,
+      ...params
+    })
+  }, [params, fetchData, itemsPerPage])
+
+  const onChangePageHandler = (e: ChangeEvent<unknown>, page: number) => {
+    handleChangePage(e, page)
+    if (page > 1) {
+      searchParams.set('skip', `${(page - 1) * limit}`)
+    } else {
+      searchParams.delete('skip')
+    }
+    setSearchParams(searchParams)
+  }
 
   return (
     <PageWrapper>
@@ -186,24 +185,32 @@ const FindOffers = () => {
           updateFilter={onSearchHandler}
         />
       </AppToolbar>
-      <Box sx={styles.filterContainer}>
-        <Box sx={styles.switchRole}>
-          <AppContentSwitcher
-            active={active}
-            onChange={onChangeSwitch}
-            switchOptions={mockSwitchOptionsWithoutTooltip}
-            typographyVariant='body1'
+
+      <OfferToolbar
+        setIsFilterShown={setIsFilterShown}
+        setViewMode={setViewMode}
+        viewMode={viewMode}
+      />
+
+      <Box sx={styles.container}>
+        <OfferFilterMenu clearPage={clearPage} isVisible={isFilterShown} />
+        {loading ? (
+          <Loader />
+        ) : items.length ? (
+          <OfferList
+            isFilterVisible={isFilterShown}
+            offers={items}
+            viewMode={viewMode}
           />
-        </Box>
-        <OfferViewSwitcher setViewMode={setViewMode} viewMode={viewMode} />
+        ) : (
+          <NotFoundResults description={t('findOffers.notFound.description')} />
+        )}
       </Box>
-      {loading ? (
-        <Loader />
-      ) : items.length ? (
-        <OfferList offers={items} viewMode={viewMode} />
-      ) : (
-        <NotFoundResults description={t('findOffers.notFound.description')} />
-      )}
+      <AppPagination
+        onChange={onChangePageHandler}
+        page={page}
+        pageCount={Math.ceil(count / limit)}
+      />
     </PageWrapper>
   )
 }
