@@ -57,7 +57,7 @@ const ProfilePicture = () => {
         </Alert>
       </Snackbar>
 
-      {userData.photo[0].url ? (
+      {userData.photo[0]?.url ? (
         <img alt='Profile' src={userData.photo[0].url} />
       ) : (
         <Box sx={styles.profilePictureInitials}>
