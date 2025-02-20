@@ -3,9 +3,8 @@ import palette from '~/styles/app-theme/app.pallete'
 export const styles = {
   displayCards: {
     display: 'flex',
-    gap: '8px',
-    marginLeft: 'auto',
-    marginBottom: '20px'
+    gap: '8px'
+    // marginLeft: 'auto'
   },
   displayCard: {
     cursor: 'pointer',
