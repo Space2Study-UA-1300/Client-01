@@ -16,7 +16,7 @@ import useCategoriesNames from '~/hooks/use-categories-names'
 import useSubjectsNames from '~/hooks/use-subjects-names'
 
 const SubjectForm = ({ handleSubmit }) => {
-  const { stepData } = useStepContext()
+  const { stepData, handleStepData } = useStepContext()
   const { t } = useTranslation()
 
   const [inputCategory, setInputCategory] = useState('')
@@ -28,8 +28,8 @@ const SubjectForm = ({ handleSubmit }) => {
   ])
 
   useEffect(() => {
-    stepData.subjects = subjectsChipList
-  }, [subjectsChipList, stepData])
+    handleStepData('subjects', subjectsChipList)
+  }, [subjectsChipList])
 
   const categories = useCategoriesNames({
     fetchOnMount: true
@@ -85,7 +85,6 @@ const SubjectForm = ({ handleSubmit }) => {
   }
 
   const addCategory = () => {
-    console.log(subjectsChipList)
     if (selectedSubject.name && selectedCategory.name) {
       if (!subjectsChipList.includes(selectedSubject.name)) {
         setSubjectsChipList(() => [...subjectsChipList, selectedSubject])

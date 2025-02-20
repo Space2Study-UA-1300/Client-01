@@ -1,28 +1,70 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
-import { styles } from '~/containers/tutor-home-page/general-info-step/GeneralInfoStep.styles'
-import { useTranslation } from 'react-i18next'
 import { Typography } from '@mui/material'
-import { firstName, lastName } from '~/utils/validations/login'
+
+import { styles } from '~/containers/tutor-home-page/general-info-step/GeneralInfoStep.styles'
+
 import AppTextField from '~/components/app-text-field/AppTextField'
-import useForm from '~/hooks/use-form'
 import { COUNTRIES_AND_CITIES } from '~/containers/tutor-home-page/general-info-step/constantsGeneral'
+import { defaultResponses } from '~/constants'
+import { firstName, lastName } from '~/utils/validations/login'
+import { userService } from '~/services/user-service'
+import useForm from '~/hooks/use-form'
+import useAxios from '~/hooks/use-axios'
+import { useAppSelector } from '~/hooks/use-redux'
+import { useStepContext } from '~/context/step-context'
 
 const GeneralInfoStep = ({ btnsBox }) => {
   const { t } = useTranslation()
-  const [message, setMessage] = useState('')
-  const [selectedCountry, setSelectedCountry] = useState('')
+  const { userId, userRole } = useAppSelector((state) => state.appMain)
+  const { stepData, handleStepData } = useStepContext()
+  const { country, city, professionalSummary } = stepData.generalInfo.data
+
+  const [message, setMessage] = useState(professionalSummary)
+  const [selectedCountry, setSelectedCountry] = useState(country)
+  const [selectedCity, setSelectedCity] = useState(city)
   const [cities, setCities] = useState([])
+
   const maxLength = 100
-  const { handleInputChange, handleBlur, data, errors } = useForm({
-    initialValues: { firstName: '', lastName: '' },
+
+  const getUserData = useCallback(
+    () => userService.getUserById(userId, userRole),
+    [userId, userRole]
+  )
+
+  // console.log(getUserData)
+
+  const { response } = useAxios({
+    service: getUserData,
+    fetchOnMount: true,
+    defaultResponse: defaultResponses.array
+  })
+
+  useEffect(() => {
+    handleStepData('generalInfo', {
+      country: selectedCountry,
+      city: selectedCity,
+      professionalSummary: message,
+      firstName: response.firstName,
+      lastName: response.lastName
+    })
+  }, [message, selectedCity, selectedCountry])
+
+  const { handleBlur, errors } = useForm({
+    initialValues: {
+      firstName: response.firstName,
+      lastName: response.lastName
+    },
     validations: { firstName, lastName }
   })
+
   const handleMessageChange = (event) => {
     const newMessage = event.target.value
     if (newMessage.length <= maxLength) {
@@ -43,11 +85,16 @@ const GeneralInfoStep = ({ btnsBox }) => {
     setCities(COUNTRIES_AND_CITIES[country] || [])
   }
 
+  const handleCityChange = (event) => {
+    setSelectedCity(event.target.value)
+  }
+
   useEffect(() => {
     if (selectedCountry) {
       setCities(COUNTRIES_AND_CITIES[selectedCountry] || [])
     }
   }, [selectedCountry])
+
   return (
     <Box sx={styles.container}>
       <Box sx={styles.imageContainer}>
@@ -59,7 +106,7 @@ const GeneralInfoStep = ({ btnsBox }) => {
         />
       </Box>
       <Box component='form' sx={styles.form}>
-        <Typography sx={{ mb: { md: '20px', sm: '16px' } }}>
+        <Typography sx={{ mb: { sm: '16px' } }}>
           {t('becomeTutor.generalInfo.title')}
         </Typography>
 
@@ -73,7 +120,7 @@ const GeneralInfoStep = ({ btnsBox }) => {
             required
             sx={{ mb: { md: '5px', xs: '0' } }}
             type='text'
-            value={data.firstName}
+            value={response.firstName}
           />
           <AppTextField
             autoFocus
@@ -84,7 +131,7 @@ const GeneralInfoStep = ({ btnsBox }) => {
             required
             sx={{ mb: { md: '5px', xs: '0' } }}
             type='text'
-            value={data.lastName}
+            value={response.lastName}
           />
         </Box>
         <FormControl fullWidth sx={styles.inputField}>
@@ -108,10 +155,10 @@ const GeneralInfoStep = ({ btnsBox }) => {
           <InputLabel>{t('common.labels.city')}</InputLabel>
           <Select
             label={t('common.labels.city')}
-            onChange={handleInputChange('city')}
+            onChange={handleCityChange}
             required
             sx={{ borderRadius: '8px', border: '1px solid #ccc' }}
-            value={data.city || ''}
+            value={selectedCity}
           >
             {selectedCountry ? (
               cities.length > 0 ? (
@@ -147,7 +194,7 @@ const GeneralInfoStep = ({ btnsBox }) => {
         <Box sx={styles.countSymbol}>
           <span>{`${message.length}/${maxLength}`}</span>
         </Box>
-        <Typography sx={{ mb: { md: '20px', sm: '16px' } }}>
+        <Typography sx={{ mb: { sm: '16px' } }}>
           {t('becomeTutor.generalInfo.helperText')}
         </Typography>
         {btnsBox}
