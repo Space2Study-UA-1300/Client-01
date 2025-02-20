@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
+
+import { axiosClient } from '~/plugins/axiosClient'
 
 import { Box, Icon, Typography } from '@mui/material'
 
@@ -10,6 +12,7 @@ import AppButton from '../app-button/AppButton'
 import CheckboxList from '../checkbox-list/CheckboxList'
 import RadioButtonInputs from '../radio-button-inputs/RadioButtonInputs'
 
+import { URLs } from '~/constants/request'
 import { ProficiencyLevelEnum } from '~/types'
 import { styles } from './OfferFilterMenu.styles'
 
@@ -23,6 +26,9 @@ const OfferFilterMenu = ({ isVisible, clearPage }) => {
   const ratingFilter = searchParams.get('rating') ?? '0'
   const price = searchParams.get('price')?.split(',') ?? [0, 3500]
 
+  const [languageItems, setLanguageItems] = useState([
+    { value: 'any', title: 'Any language' }
+  ])
   const [filters, setFilters] = useState({
     proficiencyLevel: [].concat(checkedLevels),
     language: languageFilter,
@@ -65,12 +71,6 @@ const OfferFilterMenu = ({ isVisible, clearPage }) => {
     }
   ]
 
-  const languageItems = [
-    { value: 'any', title: 'Any language' },
-    { value: 'ukrainian', title: 'Ukrainian' },
-    { value: 'german', title: 'German' }
-  ]
-
   const onSetFilters = () => {
     searchParams.delete('proficiencyLevel')
     searchParams.delete('language')
@@ -96,6 +96,31 @@ const OfferFilterMenu = ({ isVisible, clearPage }) => {
     setSearchParams(searchParams)
   }
 
+  const onClearFilters = () => {
+    searchParams.delete('proficiencyLevel')
+    searchParams.delete('language')
+    searchParams.delete('rating')
+    searchParams.delete('price')
+
+    setFilters({
+      proficiencyLevel: [],
+      language: 'any',
+      price: [0, 3500],
+      rating: '0'
+    })
+    setSearchParams(searchParams)
+  }
+
+  useEffect(() => {
+    axiosClient.get(URLs.languages.get).then((response) => {
+      const languages = response.data.map(({ name }) => ({
+        value: name.toLowerCase(),
+        title: name
+      }))
+      setLanguageItems([{ value: 'any', title: 'Any language' }, ...languages])
+    })
+  }, [])
+
   return (
     <Box
       sx={{
@@ -116,6 +141,7 @@ const OfferFilterMenu = ({ isVisible, clearPage }) => {
         <AppSelect
           fields={languageItems}
           setValue={(value) => onChangeFilter('language', value)}
+          sx={styles.select}
           value={filters.language}
         />
       </Box>
@@ -140,11 +166,7 @@ const OfferFilterMenu = ({ isVisible, clearPage }) => {
         <AppButton fullWidth onClick={onSetFilters} variant='containedLight'>
           Apply filters
         </AppButton>
-        <AppButton
-          fullWidth
-          //   sx={{ backgroundColor: '#ECEFF1', border: '1px solid transparent' }}
-          variant='tonal'
-        >
+        <AppButton fullWidth onClick={onClearFilters} variant='tonal'>
           Clear filters
         </AppButton>
       </Box>

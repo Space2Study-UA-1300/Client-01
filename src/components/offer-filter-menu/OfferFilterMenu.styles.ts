@@ -12,6 +12,9 @@ export const styles = {
     color: 'primary.700',
     mb: '15px'
   },
+  select: {
+    maxHeight: '20rem'
+  },
   rating: {
     display: 'flex',
     alignItems: 'center',
