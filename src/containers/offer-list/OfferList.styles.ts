@@ -3,10 +3,7 @@ export const styles = {
     columnGap: '24px',
     rowGap: '24px'
   },
-  // 'container--list': {
-  //   display: 'flex',
-  //   flexDirection: 'column'
-  // },
+
   'container--list': {
     display: 'flex',
     flexDirection: 'column',
@@ -14,7 +11,7 @@ export const styles = {
   },
   'container--grid': {
     display: 'grid',
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     gridTemplateColumns: 'repeat(3, minmax(360px, 1fr))'
   },
   cardNarrow: {
