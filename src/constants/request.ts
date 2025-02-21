@@ -47,5 +47,8 @@ export const URLs = {
   },
   media: {
     uploadImage: '/upload-image'
+  },
+  languages: {
+    get: '/languages'
   }
 }

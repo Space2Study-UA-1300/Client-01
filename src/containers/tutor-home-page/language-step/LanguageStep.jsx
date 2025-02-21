@@ -1,25 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import axios from 'axios'
 import Box from '@mui/material/Box'
 import { Typography, Autocomplete, TextField } from '@mui/material'
 
 import { styles } from '~/containers/tutor-home-page/language-step/LanguageStep.styles'
 import img from '~/assets/img/tutor-home-page/become-tutor/languages.svg'
-
-import { languagesMock } from '../subjects-step/constants'
 import { useStepContext } from '~/context/step-context'
-
-const languages = languagesMock.map((lang) => lang.name)
 
 const LanguageStep = ({ btnsBox }) => {
   const { t } = useTranslation()
+  const [displayedLanguages, setDisplayedLanguages] = useState([])
   const { stepData, handleStepData } = useStepContext()
-
   const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
-  const [displayedLanguages, setDisplayedLanguages] = useState(
-    languages.slice(0, 6)
-  )
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [search, setSearch] = useState('')
+  const fetchLanguages = async (newSearch = search, reset = false) => {
+    if (!hasMore && !reset) return
+
+    try {
+      const response = await axios.get(`http://localhost:8080/languages`, {
+        params: { page: reset ? 1 : page, limit: 6, search: newSearch }
+      })
+
+      const { languages, hasMore: newHasMore } = response.data
+
+      setDisplayedLanguages((prev) =>
+        reset ? languages : [...prev, ...languages]
+      )
+      setPage(reset ? 2 : page + 1)
+      setHasMore(newHasMore)
+    } catch (error) {
+      console.error('Error while loading languages:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchLanguages('', true)
+  }, [])
 
   useEffect(() => {
     handleStepData('language', selectedLanguage)
@@ -27,15 +47,18 @@ const LanguageStep = ({ btnsBox }) => {
 
   const handleScroll = (event) => {
     const listboxNode = event.currentTarget
+
     if (
       listboxNode.scrollTop + listboxNode.clientHeight >=
-      listboxNode.scrollHeight
+      listboxNode.scrollHeight - 10
     ) {
-      setDisplayedLanguages((prev) => [
-        ...prev,
-        ...languages.slice(prev.length, prev.length + 6)
-      ])
+      fetchLanguages()
     }
+  }
+
+  const handleInputChange = (event, newValue) => {
+    setSearch(newValue)
+    fetchLanguages(newValue, true)
   }
 
   return (
@@ -44,6 +67,30 @@ const LanguageStep = ({ btnsBox }) => {
         <Box component='img' src={img} sx={styles.img} />
       </Box>
       <Box sx={styles.rigthBox}>
+        <Box>
+          <Typography sx={styles.description}>
+            {t('becomeTutor.languages.title')}
+          </Typography>
+          <Box sx={styles.form}>
+            <Autocomplete
+              ListboxProps={{
+                style: { maxHeight: 200, overflow: 'auto' },
+                onScroll: handleScroll
+              }}
+              getOptionLabel={(option) => option.name}
+              onChange={(event, newValue) => setSelectedLanguage(newValue)}
+              onInputChange={handleInputChange}
+              options={displayedLanguages}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t('becomeTutor.languages.autocompleteLabel')}
+                />
+              )}
+              value={selectedLanguage}
+            />
+          </Box>
+        </Box>
         <Box>
           <Typography sx={styles.description}>
             {t('becomeTutor.languages.title')}
