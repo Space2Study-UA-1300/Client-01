@@ -6,7 +6,15 @@ export const styles = {
     justifyContent: 'space-between',
     gap: '40px',
     height: { sm: '485px' },
+    paddingBottom: { xs: '30px', sm: '0px' },
     ...fadeAnimation
+  },
+  description: {
+    fontWeight: 400,
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '0.15px',
+    paddingBottom: { xs: '20px', sm: ' 16px' }
   },
   imgContainer: {
     display: 'flex',
@@ -18,6 +26,11 @@ export const styles = {
   img: {
     width: '100%',
     m: { sm: 0, xs: '0 auto' }
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: { sm: '340px' }
   },
   rigthBox: {
     maxWidth: '432px',
