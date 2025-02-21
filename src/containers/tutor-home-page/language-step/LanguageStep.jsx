@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import axios from 'axios'
 import Box from '@mui/material/Box'
 import { Typography, Autocomplete, TextField } from '@mui/material'
@@ -7,6 +9,7 @@ import img from '~/assets/img/tutor-home-page/become-tutor/languages.svg'
 import { useStepContext } from '~/context/step-context'
 
 const LanguageStep = ({ btnsBox }) => {
+  const { t } = useTranslation()
   const [displayedLanguages, setDisplayedLanguages] = useState([])
   const { stepData, handleStepData } = useStepContext()
   const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
@@ -65,8 +68,7 @@ const LanguageStep = ({ btnsBox }) => {
       <Box sx={styles.rigthBox}>
         <Box>
           <Typography sx={styles.description} variant='h6'>
-            Please select the language in which you would like to study and
-            cooperate.
+            {t('becomeTutor.languages.title')}
           </Typography>
 
           <Autocomplete
@@ -89,4 +91,5 @@ const LanguageStep = ({ btnsBox }) => {
     </Box>
   )
 }
+
 export default LanguageStep
