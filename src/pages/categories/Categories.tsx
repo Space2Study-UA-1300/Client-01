@@ -26,7 +26,10 @@ import CategoryList from '~/containers/category-list-container/CategoryList'
 
 const Categories = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [match, setMatch] = useState<string>('')
+
+  const categoryNameValue = searchParams.get('categoryName') || ''
+
+  const [match, setMatch] = useState<string>(categoryNameValue)
 
   const params = useMemo(() => ({ name: match }), [match])
 
