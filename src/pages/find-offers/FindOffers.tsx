@@ -1,77 +1,73 @@
-import { useTranslation } from 'react-i18next'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { getOppositeRole } from '~/utils/helper-functions'
-import { Box } from '@mui/material'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import useBreakpoints from '~/hooks/use-breakpoints'
-import useAxios from '~/hooks/use-axios'
+import { useTranslation } from 'react-i18next'
+
 import { categoryService } from '~/services/category-service'
 import { subjectService } from '~/services/subject-service'
 import { offerService } from '~/services/offer-service'
-import { authRoutes } from '~/router/constants/authRoutes'
-import { getScreenBasedLimit } from '~/utils/helper-functions'
-import DirectionLink from '~/components/direction-link/DirectionLink'
-import PageWrapper from '~/components/page-wrapper/PageWrapper'
-import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
-import AppToolbar from '~/components/app-toolbar/AppToolbar'
-import AsyncAutocomplete from '~/components/async-autocomlete/AsyncAutocomplete'
-import SearchFilterInput from '~/components/search-filter-input/SearchFilterInput'
-import NotFoundResults from '~/components/not-found-results/NotFoundResults'
-import Loader from '~/components/loader/Loader'
-import OfferViewSwitcher from '~/components/offer-view-switcher/OfferViewSwitcher'
-import OfferList from '~/containers/offer-list/OfferList'
+
+import useBreakpoints from '~/hooks/use-breakpoints'
 import { useAppSelector } from '~/hooks/use-redux'
+import usePagination from '~/hooks/table/use-pagination'
+import useAxios from '~/hooks/use-axios'
+import { authRoutes } from '~/router/constants/authRoutes'
+import { getOppositeRole, getScreenBasedLimit } from '~/utils/helper-functions'
+
+import { Box } from '@mui/material'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+
+import AppPagination from '~/components/app-pagination/AppPagination'
+import AsyncAutocomplete from '~/components/async-autocomlete/AsyncAutocomplete'
+import AppToolbar from '~/components/app-toolbar/AppToolbar'
+import DirectionLink from '~/components/direction-link/DirectionLink'
+import Loader from '~/components/loader/Loader'
+import NotFoundResults from '~/components/not-found-results/NotFoundResults'
+import OfferFilterMenu from '~/components/offer-filter-menu/OfferFilterMenu'
+import OfferToolbar from '~/components/offer-toolbar/OfferToolbar'
+import OfferList from '~/containers/offer-list/OfferList'
+import PageWrapper from '~/components/page-wrapper/PageWrapper'
+import SearchFilterInput from '~/components/search-filter-input/SearchFilterInput'
+import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
+
 import { itemsLoadLimit } from '~/constants'
-import { styles } from '~/pages/find-offers/FindOffers.styles'
 import { CategoryNameInterface, SizeEnum } from '~/types'
-import AppContentSwitcher from '~/components/app-content-switcher/AppContentSwitcher'
-import { SwitchOptions } from '~/types'
+import { styles } from '~/pages/find-offers/FindOffers.styles'
 
 const FindOffers = () => {
   const { t } = useTranslation()
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [isFilterShown, setIsFilterShown] = useState(false)
+
+  const { userRole } = useAppSelector((state) => state.appMain)
+  const opositeRole = getOppositeRole(userRole)
+
   const breakpoints = useBreakpoints()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const itemsPerPage = getScreenBasedLimit(breakpoints, itemsLoadLimit)
+
+  const [searchParams, setSearchParams] = useSearchParams({
+    authorRole: opositeRole
+  })
+
   const categoryId = searchParams.get('category') ?? ''
   const subjectId = searchParams.get('subject') ?? ''
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const cardsLimit = getScreenBasedLimit(breakpoints, itemsLoadLimit)
-  const { userRole } = useAppSelector((state) => state.appMain)
-  const oppositeRole = getOppositeRole(userRole)
-  const [active, setActive] = useState(false)
-  useEffect(() => {
-    searchParams.set('authorRole', oppositeRole)
-    setSearchParams(searchParams)
-  }, [])
+  const limit = Number(searchParams.get('limit')) || itemsPerPage
 
-  const roleFromURL = searchParams.get('authorRole') || ''
+  const { page, handleChangePage, clearPage } = usePagination({
+    itemsPerPage: limit
+  })
 
-  const setAuthor = () => {
-    const roleMapping: Record<string, string> = {
-      tutor: 'student',
-      student: 'tutor'
-    }
-    const mappedRole = roleMapping[roleFromURL]
-    if (mappedRole) {
-      searchParams.set('authorRole', mappedRole)
-      setSearchParams(searchParams)
-    }
-  }
-  const onChangeSwitch = () => {
-    setActive((prev) => !prev)
-    setAuthor()
-  }
-  const mockSwitchOptionsWithoutTooltip: SwitchOptions = {
-    left: {
-      text: t(`findOffers.switchOption.${oppositeRole}`)
-    },
-    right: {
-      text: t(`findOffers.switchOption.${userRole}`)
-    }
-  }
   const params = useMemo(
     () => ({ ...Object.fromEntries(searchParams.entries()) }),
     [searchParams]
+  )
+
+  const resetPagination = () => {
+    searchParams.delete('skip')
+  }
+
+  const getSubjectsService = useCallback(
+    () => subjectService.getSubjectsNames(categoryId),
+    [categoryId]
   )
 
   const onCategoryChange = (
@@ -84,6 +80,9 @@ const FindOffers = () => {
     } else {
       searchParams.set('category', value._id)
     }
+
+    resetPagination()
+    clearPage()
 
     setSearchParams(searchParams)
   }
@@ -98,13 +97,51 @@ const FindOffers = () => {
       searchParams.set('subject', value._id)
     }
 
+    resetPagination()
+    clearPage()
+
     setSearchParams(searchParams)
   }
 
-  const getSubjectsService = useCallback(
-    () => subjectService.getSubjectsNames(categoryId),
-    [categoryId]
-  )
+  const onSearchHandler = (data: string) => {
+    if (!data) {
+      searchParams.delete('search')
+    } else {
+      searchParams.set('search', data)
+    }
+
+    resetPagination()
+    clearPage()
+
+    setSearchParams(searchParams)
+  }
+
+  const onChangePageHandler = (e: ChangeEvent<unknown>, page: number) => {
+    handleChangePage(e, page)
+    if (page > 1) {
+      searchParams.set('skip', `${(page - 1) * limit}`)
+    } else {
+      searchParams.delete('skip')
+    }
+    setSearchParams(searchParams)
+  }
+
+  const {
+    response: { items, count },
+    loading,
+    fetchData
+  } = useAxios({
+    service: offerService.getOffers,
+    defaultResponse: { items: [], count: 0 },
+    fetchOnMount: false
+  })
+
+  useEffect(() => {
+    void fetchData({
+      limit: itemsPerPage,
+      ...params
+    })
+  }, [params, fetchData, itemsPerPage])
 
   const autoCompleteCategories = (
     <AsyncAutocomplete
@@ -136,30 +173,6 @@ const FindOffers = () => {
     />
   )
 
-  const onSearchHandler = (data: string) => {
-    if (!data) {
-      searchParams.delete('search')
-    } else {
-      searchParams.set('search', data)
-    }
-
-    setSearchParams(searchParams)
-  }
-
-  const {
-    response: { items },
-    loading,
-    fetchData
-  } = useAxios({
-    service: offerService.getOffers,
-    defaultResponse: { items: [], count: 0 },
-    fetchOnMount: false
-  })
-
-  useEffect(() => {
-    void fetchData({ ...params, limit: cardsLimit })
-  }, [params, fetchData, cardsLimit])
-
   return (
     <PageWrapper>
       <TitleWithDescription
@@ -186,24 +199,32 @@ const FindOffers = () => {
           updateFilter={onSearchHandler}
         />
       </AppToolbar>
-      <Box sx={styles.filterContainer}>
-        <Box sx={styles.switchRole}>
-          <AppContentSwitcher
-            active={active}
-            onChange={onChangeSwitch}
-            switchOptions={mockSwitchOptionsWithoutTooltip}
-            typographyVariant='body1'
+
+      <OfferToolbar
+        setIsFilterShown={setIsFilterShown}
+        setViewMode={setViewMode}
+        viewMode={viewMode}
+      />
+
+      <Box sx={styles.container}>
+        <OfferFilterMenu clearPage={clearPage} isVisible={isFilterShown} />
+        {loading ? (
+          <Loader />
+        ) : items.length ? (
+          <OfferList
+            isFilterVisible={isFilterShown}
+            offers={items}
+            viewMode={viewMode}
           />
-        </Box>
-        <OfferViewSwitcher setViewMode={setViewMode} viewMode={viewMode} />
+        ) : (
+          <NotFoundResults description={t('findOffers.notFound.description')} />
+        )}
       </Box>
-      {loading ? (
-        <Loader />
-      ) : items.length ? (
-        <OfferList offers={items} viewMode={viewMode} />
-      ) : (
-        <NotFoundResults description={t('findOffers.notFound.description')} />
-      )}
+      <AppPagination
+        onChange={onChangePageHandler}
+        page={page}
+        pageCount={Math.ceil(count / limit)}
+      />
     </PageWrapper>
   )
 }

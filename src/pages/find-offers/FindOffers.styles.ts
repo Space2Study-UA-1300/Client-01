@@ -40,6 +40,12 @@ export const styles = {
       color: 'primary.500'
     }
   },
+  container: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '50px',
+    marginBottom: '40px'
+  },
   displayCards: { display: 'flex', gap: '10px' },
   displayCard: {
     cursor: 'pointer',
@@ -59,5 +65,29 @@ export const styles = {
   switchRole: {
     height: 50,
     width: 150
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  filterMenu: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    color: 'primary.700',
+    cursor: 'pointer'
+  },
+  filterCount: {
+    width: '24px',
+    height: '24px',
+    backgroundColor: '#78909C',
+    borderRadius: '50%'
+  },
+  filterCountText: {
+    color: '#fff',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }

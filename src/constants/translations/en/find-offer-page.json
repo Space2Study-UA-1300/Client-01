@@ -34,8 +34,9 @@
     "3stars": "3 and above"
   },
   "filterTitles": {
+    "filters":"Filters",
     "rating": "Rating",
-    "level": "Level",
+    "level": "Levels",
     "language": "Language",
     "price": "Price",
     "search": "Search by name",
