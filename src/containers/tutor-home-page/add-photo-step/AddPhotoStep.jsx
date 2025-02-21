@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Box, Typography, Alert, Snackbar, IconButton } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
@@ -18,6 +19,7 @@ import { useStepContext } from '~/context/step-context'
 
 const AddPhotoStep = ({ btnsBox }) => {
   const { stepData, handleStepData } = useStepContext()
+  const { t } = useTranslation()
 
   const [image, setImage] = useState(null)
   const [photoFile, setPhotoFile] = useState(stepData.photo)
@@ -47,13 +49,13 @@ const AddPhotoStep = ({ btnsBox }) => {
     setError(null)
 
     if (!allowedTypes.includes(file.type)) {
-      setError('Please upload an image file(JPEG, PNG, or GIF)')
+      setError(t('becomeTutor.photo.typeError'))
       setOpen(true)
       return
     }
 
     if (file.size > maxSize) {
-      setError('File size should be less than 10MB')
+      setError(t('becomeTutor.photo.fileSizeError'))
       setOpen(true)
       return
     }
@@ -123,7 +125,11 @@ const AddPhotoStep = ({ btnsBox }) => {
       >
         {image ? (
           <Box sx={style.imgContainer}>
-            <img alt='Uploaded preview' src={image} style={style.img} />
+            <img
+              alt={t('becomeTutor.photo.placeholder')}
+              src={image}
+              style={style.img}
+            />
           </Box>
         ) : (
           <Typography sx={{ ...appTypography.body2, color: 'primary.900' }}>
@@ -144,8 +150,7 @@ const AddPhotoStep = ({ btnsBox }) => {
             ...style.description
           }}
         >
-          Please upload a photo that represents you and helps others recognize
-          you
+          {t('becomeTutor.photo.description')}
         </Typography>
         <Box sx={style.fileUploader.root}>
           <AppButton
@@ -157,7 +162,7 @@ const AddPhotoStep = ({ btnsBox }) => {
           >
             {!image && <CloudUploadIcon sx={{ mr: 1, color: 'primary.700' }} />}
             <Typography sx={{ textOverflow: 'clip' }}>
-              {image ? photoFile.name : `Upload your profile photo`}
+              {image ? photoFile.name : t('becomeTutor.photo.button')}
             </Typography>
             <VisuallyHiddenInput
               accept='image/png, image/jpg, image/jpeg'
@@ -175,7 +180,7 @@ const AddPhotoStep = ({ btnsBox }) => {
           </AppButton>
         </Box>
         <Typography sx={{ ...appTypography.caption, color: 'primary.900' }}>
-          {image ? '' : 'Maximum file size should be less than 10 MB'}
+          {image ? '' : t('becomeTutor.photo.fileSizer')}
         </Typography>
       </Box>
     )
