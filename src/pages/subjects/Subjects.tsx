@@ -26,7 +26,7 @@ import OfferRequestBlock from '~/containers/find-offer/offer-request-block/Offer
 import AsyncAutocomplete from '~/components/async-autocomlete/AsyncAutocomplete'
 import useBreakpoints from '~/hooks/use-breakpoints'
 import serviceIcon from '~/assets/img/student-home-page/service_icon.png'
-import { getOpositeRole, getScreenBasedLimit } from '~/utils/helper-functions'
+import { getOppositeRole, getScreenBasedLimit } from '~/utils/helper-functions'
 import { mapArrayByField } from '~/utils/map-array-by-field'
 
 import {
@@ -92,7 +92,7 @@ const Subjects = () => {
     params
   })
 
-  const oppositeRole = getOpositeRole(userRole)
+  const oppositeRole = getOppositeRole(userRole)
 
   const cards = useMemo(
     () =>

@@ -30,6 +30,7 @@ import {
   VisibilityEnum,
   TextFieldVariantEnum
 } from '~/types'
+import { useSearchParams } from 'react-router-dom'
 
 interface SearchAutocompleteProps
   extends Omit<AutocompleteProps<string, false, true, true>, 'renderInput'> {
@@ -48,6 +49,7 @@ const SearchAutocomplete = ({
   ...props
 }: SearchAutocompleteProps) => {
   const [searchInput, setSearchInput] = useState<string>(search)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const { t } = useTranslation()
   const { isMobile } = useBreakpoints()
@@ -66,6 +68,7 @@ const SearchAutocomplete = ({
 
   const handleAutoCompleteChange = (_: SyntheticEvent, value: string) => {
     onSearchChange && onSearchChange()
+    addSearchParams(value)
     setSearch(value)
   }
 
@@ -78,10 +81,17 @@ const SearchAutocomplete = ({
     onSearchChange && search && onSearchChange()
     setSearchInput('')
     setSearch('')
+    searchParams.delete('categoryName')
+    setSearchParams(searchParams)
   }
 
   const onEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && onSearch()
+  }
+
+  const addSearchParams = (value: string) => {
+    searchParams.set('categoryName', value)
+    setSearchParams(searchParams)
   }
 
   const labelStyle = {

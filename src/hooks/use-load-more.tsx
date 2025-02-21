@@ -1,7 +1,6 @@
 import { useState, useMemo, useLayoutEffect, useCallback } from 'react'
-
+import { useSearchParams } from 'react-router-dom'
 import useAxios from '~/hooks/use-axios'
-
 import { defaultResponses } from '~/constants'
 import { ServiceFunction, ItemsWithCount } from '~/types'
 
@@ -13,18 +12,22 @@ interface UseLoadMoreProps<Data, Params> {
 
 const useLoadMore = <Data, Params>({
   service,
-  limit,
+  limit: defaultLimit,
   params
 }: UseLoadMoreProps<Data, Params>) => {
+  const [searchParams] = useSearchParams()
+
+  const initialLimit = Number(searchParams.get('limit')) || defaultLimit
+
   const [skip, setSkip] = useState<number>(0)
   const [data, setData] = useState<Data[]>([])
-  const [previousLimit, setPreviousLimit] = useState<number>(limit)
+  const [previousLimit, setPreviousLimit] = useState<number>(initialLimit)
 
   let isFetched = false
 
   const loadMore = useCallback(
-    () => setSkip((prevState) => prevState + limit),
-    [limit]
+    () => setSkip((prevState) => prevState + initialLimit),
+    [initialLimit]
   )
 
   const handleResponse = useCallback((responseData: ItemsWithCount<Data>) => {
@@ -47,18 +50,18 @@ const useLoadMore = <Data, Params>({
   })
 
   useLayoutEffect(() => {
-    if (previousLimit === limit && !isFetched) {
-      void fetchData({ ...params, limit, skip } as Params)
+    if (previousLimit === initialLimit && !isFetched) {
+      void fetchData({ ...params, limit: initialLimit, skip } as Params)
     } else {
       resetData()
-      setPreviousLimit(limit)
+      setPreviousLimit(initialLimit)
     }
 
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       isFetched = true
     }
-  }, [fetchData, limit, previousLimit, resetData, skip, params])
+  }, [fetchData, initialLimit, previousLimit, resetData, skip, params])
 
   const isExpandable = useMemo(
     () => data.length < response.count && data.length > 0,
