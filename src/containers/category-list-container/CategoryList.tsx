@@ -21,15 +21,22 @@ interface Item {
 interface CategoryListProps {
   isExpandable: boolean
   loadMore: () => void
+  addSearchParams: () => void
   responseData: Item[]
 }
 
 const CategoryList = ({
   isExpandable,
   responseData,
-  loadMore
+  loadMore,
+  addSearchParams
 }: CategoryListProps) => {
   const { t } = useTranslation()
+
+  const handlerClick = () => {
+    addSearchParams()
+    loadMore()
+  }
   return (
     <Box>
       <Box sx={styles.container}>
@@ -46,7 +53,7 @@ const CategoryList = ({
         <CardContainer responseData={responseData} />
         <Button
           disabled={!isExpandable}
-          onClick={loadMore}
+          onClick={handlerClick}
           size='extraLarge'
           sx={styles.button}
           variant='tonal'
