@@ -8,12 +8,14 @@ import { useStepContext } from '~/context/step-context'
 import { useSnackBarContext } from '~/context/snackbar-context'
 import { userService } from '~/services/user-service'
 import { snackbarVariants } from '~/constants'
+import { useImageUpload } from '~/hooks/use-image-upload'
 
 const useSteps = ({ steps }) => {
   const [activeStep, setActiveStep] = useState(0)
   const { closeModal } = useModalContext()
   const { stepData } = useStepContext()
   const { setAlert } = useSnackBarContext()
+  const { uploadImageToService } = useImageUpload()
   const { userId } = useAppSelector((state) => state.appMain)
 
   const updateUser = useCallback(
@@ -59,14 +61,16 @@ const useSteps = ({ steps }) => {
 
   const isLastStep = activeStep === steps.length - 1
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const hasErrors = stepErrors.find((error) => error)
 
     const { firstName, lastName, country, city, professionalSummary } =
       stepData.generalInfo.data
 
+    const photoData = await uploadImageToService(stepData.photo)
+
     const data = {
-      photo: stepData.photo[0] ? stepData.photo[0] : '',
+      photo: photoData ? photoData : {},
       firstName,
       lastName,
       address: {

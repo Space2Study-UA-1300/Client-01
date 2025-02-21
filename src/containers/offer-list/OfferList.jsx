@@ -3,9 +3,15 @@ import OfferCardSquare from '~/components/offer-card-square/OfferCardSquare'
 import OfferCard from '~/components/offer-card/OfferCard'
 import { styles } from '~/containers/offer-list/OfferList.styles'
 
-const OfferList = ({ offers, viewMode }) => {
+const OfferList = ({ offers, viewMode, isFilterVisible }) => {
   return (
-    <Box sx={{ ...styles.container, ...styles[`container--${viewMode}`] }}>
+    <Box
+      sx={{
+        ...styles.container,
+        ...styles[`container--${viewMode}`],
+        ...(isFilterVisible ? { ...styles.cardNarrow } : {})
+      }}
+    >
       {offers?.map((offer) =>
         viewMode === 'list' ? (
           <OfferCard key={offer._id} offer={offer} />
