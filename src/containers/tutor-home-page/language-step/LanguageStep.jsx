@@ -42,6 +42,7 @@ const LanguageStep = ({ btnsBox }) => {
 
   useEffect(() => {
     handleStepData('language', selectedLanguage)
+    console.log('aaa', selectedLanguage, stepData)
   }, [selectedLanguage])
 
   const handleScroll = (event) => {
