@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import Box from '@mui/material/Box'
 import { Typography, Autocomplete, TextField } from '@mui/material'
 
@@ -11,6 +13,7 @@ import { useStepContext } from '~/context/step-context'
 const languages = languagesMock.map((lang) => lang.name)
 
 const LanguageStep = ({ btnsBox }) => {
+  const { t } = useTranslation()
   const { stepData, handleStepData } = useStepContext()
 
   const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
@@ -41,28 +44,33 @@ const LanguageStep = ({ btnsBox }) => {
         <Box component='img' src={img} sx={styles.img} />
       </Box>
       <Box sx={styles.rigthBox}>
-        <Typography variant='h6'>
-          Please select the language in which you would like to study and
-          cooperate.
-        </Typography>
-
-        <Autocomplete
-          ListboxProps={{
-            style: { maxHeight: 200, overflow: 'auto' },
-            onScroll: handleScroll
-          }}
-          filterOptions={(options, state) =>
-            options.filter((option) =>
-              option.toLowerCase().includes(state.inputValue.toLowerCase())
-            )
-          }
-          onChange={(event, newValue) => setSelectedLanguage(newValue)}
-          options={displayedLanguages}
-          renderInput={(params) => (
-            <TextField {...params} label='Your native language' />
-          )}
-          value={selectedLanguage}
-        />
+        <Box>
+          <Typography sx={styles.description}>
+            {t('becomeTutor.languages.title')}
+          </Typography>
+          <Box sx={styles.form}>
+            <Autocomplete
+              ListboxProps={{
+                style: { maxHeight: 200, overflow: 'auto' },
+                onScroll: handleScroll
+              }}
+              filterOptions={(options, state) =>
+                options.filter((option) =>
+                  option.toLowerCase().includes(state.inputValue.toLowerCase())
+                )
+              }
+              onChange={(event, newValue) => setSelectedLanguage(newValue)}
+              options={displayedLanguages}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t('becomeTutor.languages.autocompleteLabel')}
+                />
+              )}
+              value={selectedLanguage}
+            />
+          </Box>
+        </Box>
 
         {btnsBox}
       </Box>
