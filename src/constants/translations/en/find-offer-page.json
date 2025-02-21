@@ -11,6 +11,10 @@
     "title": "Explore Offers",
     "description": "Discover offers in your area of interest"
   },
+  "switchOption": {
+    "tutor": "Tutor's offers",
+    "student": "Students' requests"
+  },
   "backToAllSubjects": "Back to all subjects",
   "searchToolbar": {
     "label": "Search by tutor name"
@@ -30,8 +34,9 @@
     "3stars": "3 and above"
   },
   "filterTitles": {
+    "filters":"Filters",
     "rating": "Rating",
-    "level": "Level",
+    "level": "Levels",
     "language": "Language",
     "price": "Price",
     "search": "Search by name",
@@ -47,6 +52,8 @@
   "notFound":{
     "description": "We couldn’t find what you were searching for."
   },
+  "currency": "UAH",
+  "hour": "HOUR",
   "otherOffers":{
     "title":"Other offers"
   }

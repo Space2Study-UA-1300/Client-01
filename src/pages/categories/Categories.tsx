@@ -16,17 +16,25 @@ import PageWrapper from '~/components/page-wrapper/PageWrapper'
 import TitleWithDescription from '~/components/title-with-description/TitleWithDescription'
 import AppToolbar from '~/components/app-toolbar/AppToolbar'
 import SearchAutocomplete from '~/components/search-autocomplete/SearchAutocomplete'
+import { useSearchParams } from 'react-router-dom'
 
 import { CategoryInterface, CategoryNameInterface, SizeEnum } from '~/types'
 import { itemsLoadLimit } from '~/constants'
 import { authRoutes } from '~/router/constants/authRoutes'
 import { styles } from '~/pages/categories/Categories.styles'
+import CategoryList from '~/containers/category-list-container/CategoryList'
 
 const Categories = () => {
-  const [match, setMatch] = useState<string>('')
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const categoryNameValue = searchParams.get('categoryName') || ''
+
+  const [match, setMatch] = useState<string>(categoryNameValue)
+
   const params = useMemo(() => ({ name: match }), [match])
 
   const { t } = useTranslation()
+
   const breakpoints = useBreakpoints()
 
   const cardsLimit = getScreenBasedLimit(breakpoints, itemsLoadLimit)
@@ -49,15 +57,23 @@ const Categories = () => {
   )
 
   const {
-    // data: categories,
+    data: categories,
     // loading: categoriesLoading,
-    resetData
-    // loadMore,
+    resetData,
+    loadMore,
+    isExpandable
   } = useLoadMore<CategoryInterface, Pick<CategoryInterface, 'name'>>({
     service: getCategories,
     limit: cardsLimit,
     params
   })
+
+  const addSearchParams = () => {
+    const newLimit =
+      Number(searchParams.get('limit') || cardsLimit) + cardsLimit
+    searchParams.set('limit', newLimit.toString())
+    setSearchParams(searchParams)
+  }
 
   return (
     <PageWrapper>
@@ -87,6 +103,12 @@ const Categories = () => {
           }}
         />
       </AppToolbar>
+      <CategoryList
+        addSearchParams={addSearchParams}
+        isExpandable={isExpandable}
+        loadMore={loadMore}
+        responseData={categories}
+      />
     </PageWrapper>
   )
 }

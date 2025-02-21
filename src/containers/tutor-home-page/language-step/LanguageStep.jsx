@@ -1,31 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import axios from 'axios'
 import Box from '@mui/material/Box'
 import { Typography, Autocomplete, TextField } from '@mui/material'
-
 import { styles } from '~/containers/tutor-home-page/language-step/LanguageStep.styles'
 import img from '~/assets/img/tutor-home-page/become-tutor/languages.svg'
-
-import { languagesMock } from '../subjects-step/constants'
-
-const languages = languagesMock.map((lang) => lang.name)
+import { useStepContext } from '~/context/step-context'
 
 const LanguageStep = ({ btnsBox }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState(null)
-  const [displayedLanguages, setDisplayedLanguages] = useState(
-    languages.slice(0, 6)
-  )
+  const { t } = useTranslation()
+  const [displayedLanguages, setDisplayedLanguages] = useState([])
+  const { stepData, handleStepData } = useStepContext()
+  const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [search, setSearch] = useState('')
+  const fetchLanguages = async (newSearch = search, reset = false) => {
+    if (!hasMore && !reset) return
+
+    try {
+      const response = await axios.get(`http://localhost:8080/languages`, {
+        params: { page: reset ? 1 : page, limit: 6, search: newSearch }
+      })
+
+      const { languages, hasMore: newHasMore } = response.data
+
+      setDisplayedLanguages((prev) =>
+        reset ? languages : [...prev, ...languages]
+      )
+      setPage(reset ? 2 : page + 1)
+      setHasMore(newHasMore)
+    } catch (error) {
+      console.error('Error while loading languages:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchLanguages('', true)
+  }, [])
+
+  useEffect(() => {
+    handleStepData('language', selectedLanguage)
+  }, [selectedLanguage])
 
   const handleScroll = (event) => {
     const listboxNode = event.currentTarget
+
     if (
       listboxNode.scrollTop + listboxNode.clientHeight >=
-      listboxNode.scrollHeight
+      listboxNode.scrollHeight - 10
     ) {
-      setDisplayedLanguages((prev) => [
-        ...prev,
-        ...languages.slice(prev.length, prev.length + 6)
-      ])
+      fetchLanguages()
     }
+  }
+
+  const handleInputChange = (event, newValue) => {
+    setSearch(newValue)
+    fetchLanguages(newValue, true)
   }
 
   return (
@@ -34,29 +66,26 @@ const LanguageStep = ({ btnsBox }) => {
         <Box component='img' src={img} sx={styles.img} />
       </Box>
       <Box sx={styles.rigthBox}>
-        <Typography variant='h6'>
-          Please select the language in which you would like to study and
-          cooperate.
-        </Typography>
+        <Box>
+          <Typography sx={styles.description} variant='h6'>
+            {t('becomeTutor.languages.title')}
+          </Typography>
 
-        <Autocomplete
-          ListboxProps={{
-            style: { maxHeight: 200, overflow: 'auto' },
-            onScroll: handleScroll
-          }}
-          filterOptions={(options, state) =>
-            options.filter((option) =>
-              option.toLowerCase().includes(state.inputValue.toLowerCase())
-            )
-          }
-          onChange={(event, newValue) => setSelectedLanguage(newValue)}
-          options={displayedLanguages}
-          renderInput={(params) => (
-            <TextField {...params} label='Your native language' />
-          )}
-          value={selectedLanguage}
-        />
-
+          <Autocomplete
+            ListboxProps={{
+              style: { maxHeight: 200, overflow: 'auto' },
+              onScroll: handleScroll
+            }}
+            getOptionLabel={(option) => option.name}
+            onChange={(event, newValue) => setSelectedLanguage(newValue)}
+            onInputChange={handleInputChange}
+            options={displayedLanguages}
+            renderInput={(params) => (
+              <TextField {...params} label='Your native language' />
+            )}
+            value={selectedLanguage}
+          />
+        </Box>
         {btnsBox}
       </Box>
     </Box>

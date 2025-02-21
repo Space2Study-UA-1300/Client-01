@@ -10,7 +10,11 @@ import {
   CategoryInterface,
   StatusEnum
 } from '~/types'
+import { RequestParams } from '~/types/services/types/services.types'
 
+export interface OfferParams extends RequestParams {
+  name: string
+}
 export interface Offer extends CommonEntityFields {
   title: string
   price: number

@@ -1,19 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { Box, Typography } from '@mui/material'
-import { IconButton } from '@mui/material'
+import { Box, Typography, Alert, Snackbar, IconButton } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import CloseIcon from '@mui/icons-material/Close'
 import { styled } from '@mui/material/styles'
 
 import AppButton from '~/components/app-button/AppButton'
 
-import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
 import appTypography from '~/styles/app-theme/app.typography'
+import { style } from '~/containers/tutor-home-page/add-photo-step/AddPhotoStep.style'
+
+import {
+  allowedTypes,
+  maxSize
+} from '~/constants/photo-constants/photo-requirements'
+import { useStepContext } from '~/context/step-context'
 
 const AddPhotoStep = ({ btnsBox }) => {
+  const { stepData, handleStepData } = useStepContext()
+  const { t } = useTranslation()
+
   const [image, setImage] = useState(null)
-  const [imageName, setImageName] = useState('')
+  const [photoFile, setPhotoFile] = useState(stepData.photo)
+  const [error, setError] = useState(null)
+  const [open, setOpen] = useState(false)
+  const [isDragged, setIsDragged] = useState(false)
+
+  useEffect(() => {
+    photoFile && addPhoto(photoFile)
+  }, [photoFile])
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -27,22 +43,93 @@ const AddPhotoStep = ({ btnsBox }) => {
     width: 1
   })
 
+  const addPhoto = (file) => {
+    if (!file) return
+
+    setError(null)
+
+    if (!allowedTypes.includes(file.type)) {
+      setError(t('becomeTutor.photo.typeError'))
+      setOpen(true)
+      return
+    }
+
+    if (file.size > maxSize) {
+      setError(t('becomeTutor.photo.fileSizeError'))
+      setOpen(true)
+      return
+    }
+
+    const fileURL = URL.createObjectURL(file)
+    setImage(fileURL)
+    setPhotoFile(file)
+    handleStepData('photo', file)
+  }
+
+  useEffect(() => {
+    const preventDefaults = (event) => event.preventDefault()
+
+    window.addEventListener('dragover', preventDefaults)
+    window.addEventListener('drop', preventDefaults)
+
+    return () => {
+      window.removeEventListener('dragover', preventDefaults)
+      window.removeEventListener('drop', preventDefaults)
+    }
+  }, [])
+
   const handleFileChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const fileURL = URL.createObjectURL(event.target.files[0])
-      setImage(fileURL)
-      setImageName(event.target.files[0].name)
+    const file = event.target.files[0]
+    if (!file) return
+    addPhoto(file)
+  }
+
+  const handleDrop = (event) => {
+    event.preventDefault()
+    addPhoto(event.dataTransfer.files[0])
+    setIsDragged(false)
+  }
+
+  const handleDragOver = useCallback(
+    (event) => {
+      event.preventDefault()
+      if (!isDragged) {
+        setIsDragged(true)
+      }
+    },
+    [isDragged]
+  )
+
+  const handleDragLeave = (event) => {
+    event.preventDefault()
+    if (isDragged) {
+      setIsDragged(false)
     }
   }
 
   const UploadBox = () => {
     return (
       <Box
-        sx={image ? { ...style.uploadBox, border: 'none' } : style.uploadBox}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        sx={
+          image
+            ? { ...style.uploadBox, border: 'none' }
+            : {
+                ...style.uploadBox,
+                borderColor: isDragged && 'success.900',
+                backgroundColor: isDragged && 'success.50'
+              }
+        }
       >
         {image ? (
           <Box sx={style.imgContainer}>
-            <img alt='Uploaded preview' src={image} style={style.img} />
+            <img
+              alt={t('becomeTutor.photo.placeholder')}
+              src={image}
+              style={style.img}
+            />
           </Box>
         ) : (
           <Typography sx={{ ...appTypography.body2, color: 'primary.900' }}>
@@ -63,8 +150,7 @@ const AddPhotoStep = ({ btnsBox }) => {
             ...style.description
           }}
         >
-          Please upload a photo that represents you and helps others recognize
-          you
+          {t('becomeTutor.photo.description')}
         </Typography>
         <Box sx={style.fileUploader.root}>
           <AppButton
@@ -74,16 +160,13 @@ const AddPhotoStep = ({ btnsBox }) => {
             sx={style.fileUploader.button}
             variant='outlined'
           >
-            {image ? (
-              ''
-            ) : (
-              <CloudUploadIcon sx={{ mr: 1, color: 'primary.700' }} />
-            )}
-            <Typography>
-              {image ? imageName : `Upload your profile photo`}
+            {!image && <CloudUploadIcon sx={{ mr: 1, color: 'primary.700' }} />}
+            <Typography sx={{ textOverflow: 'clip' }}>
+              {image ? photoFile.name : t('becomeTutor.photo.button')}
             </Typography>
             <VisuallyHiddenInput
-              multiple
+              accept='image/png, image/jpg, image/jpeg'
+              name='image'
               onChange={handleFileChange}
               type='file'
             />
@@ -97,7 +180,7 @@ const AddPhotoStep = ({ btnsBox }) => {
           </AppButton>
         </Box>
         <Typography sx={{ ...appTypography.caption, color: 'primary.900' }}>
-          {image ? '' : 'Maximum file size should be less than 10 MB'}
+          {image ? '' : t('becomeTutor.photo.fileSizer')}
         </Typography>
       </Box>
     )
@@ -105,6 +188,17 @@ const AddPhotoStep = ({ btnsBox }) => {
 
   return (
     <Box sx={style.root}>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={5000}
+        onClose={() => setOpen(false)}
+        open={open}
+      >
+        <Alert onClose={() => setOpen(false)} severity='error'>
+          {error}
+        </Alert>
+      </Snackbar>
+
       <FileUploaderBox />
       <UploadBox />
       <Box sx={{ gridArea: 'empty', visibility: 'hidden' }} />

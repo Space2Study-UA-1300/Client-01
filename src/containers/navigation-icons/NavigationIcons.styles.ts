@@ -9,6 +9,32 @@ export const styles = {
       p: { sm: '12px', md: '7px', lg: '12px' }
     }
   },
+  profilePicture: {
+    ...hideOnMobile,
+    width: '45px',
+    height: '45px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    cursor: 'pointer',
+    '&>img': {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover'
+    }
+  },
+  profilePictureInitials: {
+    ...hideOnMobile,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    width: '100%',
+    height: '100%',
+    border: 'none',
+    borderRadius: '50%',
+    backgroundColor: 'companyBlue',
+    padding: '2'
+  },
   showOnlyOnMobile: { display: { md: 'none' }, color: 'primary.900' },
   loginButton: {
     ...hideOnMobile,

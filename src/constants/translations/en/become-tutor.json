@@ -1,6 +1,6 @@
 {
   "generalInfo": {
-    "title": "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.",
+    "title": "Please complete the registration form for the best possible experience.",
     "textFieldLabel": "Describe in short your professional status",
     "helperText": "Inputs with the * sign are required"
   },
@@ -9,7 +9,7 @@
     "textFieldLabel": "Text here"
   },
   "languages": {
-    "title": "Velit officia consequat duis enim velit mollit. Other categories you can add in your account settings later.",
+    "title": "Please select the language in which you would like to study and\n            cooperate.",
     "autocompleteLabel": "Your native language"
   },
   "categories": {
@@ -24,9 +24,11 @@
     "imageAlt": "Your photo",
     "button": "Upload your profile photo",
     "placeholder": "Photo Preview",
-    "description": "Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.",
-    "typeError": "Wrong file type. Only .png/.jpg/.jpeg files are allowed.",
-    "fileSizeError": "Size for one file cannot be more than 10MB."
+    "description": "Please upload a photo that represents you and helps others recognize you",
+    "fileSizer": "Maximum file size should be less than 10 MB",
+    "typeError": "Please upload an image file(JPEG, PNG, or GIF)",
+    "fileSizeError": "File size should be less than 10MB"
+
   },
   "successMessage": "Success! Your data were added."
 }
