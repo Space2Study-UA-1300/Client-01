@@ -79,7 +79,7 @@ const useSteps = ({ steps }) => {
       },
       professionalSummary: professionalSummary,
       mainSubjects: stepData.subjects,
-      nativeLanguage: stepData.language ?? ''
+      nativeLanguage: stepData.language.name ?? ''
     }
 
     !hasErrors && fetchData(data)
