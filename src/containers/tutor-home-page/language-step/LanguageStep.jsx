@@ -8,12 +8,11 @@ import { useStepContext } from '~/context/step-context'
 
 const LanguageStep = ({ btnsBox }) => {
   const [displayedLanguages, setDisplayedLanguages] = useState([])
+  const { stepData, handleStepData } = useStepContext()
   const [selectedLanguage, setSelectedLanguage] = useState(stepData.language)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [search, setSearch] = useState('')
-  const { stepData, handleStepData } = useStepContext()
-
   const fetchLanguages = async (newSearch = search, reset = false) => {
     if (!hasMore && !reset) return
 
